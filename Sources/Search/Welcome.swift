@@ -109,9 +109,9 @@ struct WelcomePanel: View {
     private var devices: some View {
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 14) {
-                Choice("Sync with iCloud", "Open tabs, pins, spaces, bookmarks and a few settings, on your iPhone and other Macs. End-to-end encrypted, in your own iCloud.", on: $syncs, plain: true)
+                Choice(String(localized: "Sync with iCloud"), String(localized: "Open tabs, pins, spaces, bookmarks and a few settings, on your iPhone and other Macs. End-to-end encrypted, in your own iCloud."), on: $syncs, plain: true)
                 Rule(inset: 0)
-                Choice("Handoff", "The page in front shows up on your iPhone and iPad.", on: $handsOff, plain: true)
+                Choice(String(localized: "Handoff"), String(localized: "The page in front shows up on your iPhone and iPad."), on: $handsOff, plain: true)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)

@@ -157,7 +157,7 @@ extension Browser {
         // only an address a tab can show again.
         if prefs.splitView, !tab.bench, tabs.contains(where: { $0.id == tab.id }),
            ["http", "https"].contains(url.scheme?.lowercased() ?? "") {
-            menu.addItem(ImageMenuItem("Open Image in Split View") { [weak self] in
+            menu.addItem(ImageMenuItem(String(localized: "Open Image in Split View")) { [weak self] in
                 self?.openLinkBeside(url, from: tab)
             })
         }

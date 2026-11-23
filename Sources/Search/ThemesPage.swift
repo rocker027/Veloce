@@ -208,7 +208,7 @@ struct ThemesPage: View {
                     get: { Color(hex: prefs.homeTuning.gradientB) },
                     set: { prefs.homeTuning.gradientB = $0.hex; prefs.homeTheme = .gradient }), supportsOpacity: false)
             }
-            ThemeSlider(title: "Angle", value: prefs.homeTuning.angle, range: 0...360, unit: "°") {
+            ThemeSlider(title: String(localized: "Angle"), value: prefs.homeTuning.angle, range: 0...360, unit: "°") {
                 prefs.homeTuning.angle = $0
                 prefs.homeTheme = .gradient
             }
@@ -228,7 +228,7 @@ struct ThemesPage: View {
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(Palette.hairline, lineWidth: 1))
             VStack(alignment: .leading, spacing: 8) {
-                Pill("Choose Image…") {
+                Pill(String(localized: "Choose Image…")) {
                     // Cancelled, or not copied: what was there stays.
                     guard let kept = HomeTheme.choose() else { return }
                     let old = prefs.homeThemeImage
@@ -237,7 +237,7 @@ struct ThemesPage: View {
                     prefs.homeTheme = .custom
                 }
                 if prefs.homeThemeImage != nil {
-                    Pill("Remove") {
+                    Pill(String(localized: "Remove")) {
                         HomeTheme.forget(prefs.homeThemeImage)
                         prefs.homeThemeImage = nil
                         if prefs.homeTheme == .custom { prefs.homeTheme = .off }
@@ -254,16 +254,16 @@ struct ThemesPage: View {
     @ViewBuilder
     private var sliders: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ThemeSlider(title: "Intensity", value: prefs.homeTuning.intensity * 100, range: 0...100, unit: "%") {
+            ThemeSlider(title: String(localized: "Intensity"), value: prefs.homeTuning.intensity * 100, range: 0...100, unit: "%") {
                 prefs.homeTuning.intensity = $0 / 100
             }
             if prefs.homeTheme == .stickers {
-                ThemeSlider(title: "Density", value: prefs.homeTuning.density * 100, range: 0...100, unit: "%") {
+                ThemeSlider(title: String(localized: "Density"), value: prefs.homeTuning.density * 100, range: 0...100, unit: "%") {
                     prefs.homeTuning.density = $0 / 100
                 }
             }
             if prefs.homeTheme == .stickers {
-                ThemeSlider(title: "Scale", value: prefs.homeTuning.scale * 100, range: 0...100, unit: "%") {
+                ThemeSlider(title: String(localized: "Scale"), value: prefs.homeTuning.scale * 100, range: 0...100, unit: "%") {
                     prefs.homeTuning.scale = $0 / 100
                 }
             }

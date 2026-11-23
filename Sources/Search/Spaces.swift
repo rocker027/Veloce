@@ -1193,10 +1193,10 @@ enum SpaceMenu {
             // A profile's last space goes with the profile.
             let profile = Profiles.shared.profile(browser.profileID)
             menu.addItem(.separator())
-            menu.addItem(item("Delete Profile “\(profile.name)”…") {
-                Ask.sure("Delete “\(profile.name)”?",
-                         detail: "“\(here.name)” is its last space. The profile's windows close, its spaces go with their tabs and pins, and its cookies, sign-ins, history and bookmarks are erased from this Mac.",
-                         confirm: "Delete", returnCancels: true) {
+            menu.addItem(item(String(localized: "Delete Profile “\(profile.name)”…")) {
+                Ask.sure(String(localized: "Delete “\(profile.name)”?"),
+                         detail: String(localized: "“\(here.name)” is its last space. The profile's windows close, its spaces go with their tabs and pins, and its cookies, sign-ins, history and bookmarks are erased from this Mac."),
+                         confirm: String(localized: "Delete"), returnCancels: true) {
                     Profiles.shared.delete(profile.id)
                 }
             })

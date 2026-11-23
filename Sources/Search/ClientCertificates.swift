@@ -21,10 +21,14 @@ struct ClientIdentity {
     let expires: Date?
 
     var label: String {
-        var text = name
-        if !issuer.isEmpty { text += " — issued by \(issuer)" }
-        if let expires { text += ", expires \(expires.formatted(date: .abbreviated, time: .omitted))" }
-        return text
+        // Whole sentences, so a language can put the parts in its own order.
+        let until = expires?.formatted(date: .abbreviated, time: .omitted)
+        switch (issuer.isEmpty, until) {
+        case (false, let until?): return String(localized: "\(name) — issued by \(issuer), expires \(until)")
+        case (false, nil): return String(localized: "\(name) — issued by \(issuer)")
+        case (true, let until?): return String(localized: "\(name), expires \(until)")
+        case (true, nil): return name
+        }
     }
 
     func same(as other: SecIdentity) -> Bool {
@@ -281,10 +285,10 @@ extension Browser {
             return finish(nil, false)
         }
         let alert = NSAlert()
-        alert.messageText = "\(host) asks for a certificate"
-        alert.informativeText = "Choose the certificate to identify yourself to this site. It is sent only if you continue."
-        alert.addButton(withTitle: "Continue")
-        alert.addButton(withTitle: "Cancel")
+        alert.messageText = String(localized: "\(host) asks for a certificate")
+        alert.informativeText = String(localized: "Choose the certificate to identify yourself to this site. It is sent only if you continue.")
+        alert.addButton(withTitle: String(localized: "Continue"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
         let menu = NSPopUpButton(frame: NSRect(x: 0, y: 0, width: 360, height: 26), pullsDown: false)
         // Items made one by one, each tagged with its place: addItem(withTitle:)
         // drops a title already there, and two cards can hold certificates

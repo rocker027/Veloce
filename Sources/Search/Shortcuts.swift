@@ -360,8 +360,8 @@ struct Command: Identifiable {
     } + [
         // As the swipe goes, and stopping at the ends as it does. No key
         // until you give one in Settings › Shortcuts (idea 761).
-        Command("spaces.next", "Next Space", .spaces, nil) { $0.stepSpace(1) },
-        Command("spaces.previous", "Previous Space", .spaces, nil) { $0.stepSpace(-1) },
+        Command("spaces.next", String(localized: "Next Space"), .spaces, nil) { $0.stepSpace(1) },
+        Command("spaces.previous", String(localized: "Previous Space"), .spaces, nil) { $0.stepSpace(-1) },
     ]
 }
 

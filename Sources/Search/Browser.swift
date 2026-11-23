@@ -2608,8 +2608,8 @@ final class Browser: NSObject, ObservableObject {
         // a bookmark's is.
         guard renamesInPlace(tab) else {
             cancelTabEdit()
-            Ask.name("Rename Tab", detail: "Without a name, the tab shows its page's title.",
-                     placeholder: tab.title, initial: tab.label, confirm: "Rename", empty: true) { [weak self, weak tab] typed in
+            Ask.name(String(localized: "Rename Tab"), detail: String(localized: "Without a name, the tab shows its page's title."),
+                     placeholder: tab.title, initial: tab.label, confirm: String(localized: "Rename"), empty: true) { [weak self, weak tab] typed in
                 guard let self, let tab else { return }
                 tab.name = typed.isEmpty ? nil : typed
                 self.writeSession(now: true)
@@ -5772,7 +5772,7 @@ final class Browser: NSObject, ObservableObject {
             for tab in going { self.finishMove(tab, toSpace: id, quietly: true) }
             self.writeSession(now: true)
             if let row = self.parked[id] { self.writeSession(now: true, space: id, row: row) }
-            self.announce("Moved \(going.count) tabs to \(destination.name)")
+            self.announce(String(localized: "Moved \(going.count) tabs to \(destination.name)"))
             then?()
         }
         let store = Spaces.store(for: id)
@@ -5786,9 +5786,9 @@ final class Browser: NSObject, ObservableObject {
         asked.notify(queue: .main) {
             guard unsaved else { return complete() }
             Ask.sure(
-                "Move Tabs?",
-                detail: "A page among these tabs has unsaved form entries. They will reopen in “\(destination.name)” with that Space’s sign-ins, so the entries may be lost.",
-                confirm: "Move",
+                String(localized: "Move Tabs?"),
+                detail: String(localized: "A page among these tabs has unsaved form entries. They will reopen in “\(destination.name)” with that Space’s sign-ins, so the entries may be lost."),
+                confirm: String(localized: "Move"),
                 then: complete
             )
         }

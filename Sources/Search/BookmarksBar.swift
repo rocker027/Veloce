@@ -88,7 +88,7 @@ struct BookmarksBar: View {
         .clipped()
         .overlay(alignment: .trailing) {
             if !hidden.isEmpty {
-                More { BookmarkMenu.shared.popUp(hidden, title: "More Bookmarks") }
+                More { BookmarkMenu.shared.popUp(hidden, title: String(localized: "More Bookmarks")) }
                     .padding(.trailing, BookmarksBar.air - 4)
             }
         }

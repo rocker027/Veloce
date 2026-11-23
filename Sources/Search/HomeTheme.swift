@@ -16,12 +16,12 @@ enum HomeTheme: String, CaseIterable, Identifiable {
         var id: String { rawValue }
         var title: String {
             switch self {
-            case .off: return "Off"
-            case .wall: return "Wall painting"
-            case .stickers: return "Stickers"
-            case .solid: return "Solid colour"
-            case .gradient: return "Gradient"
-            case .image: return "Image"
+            case .off: return String(localized: "Off")
+            case .wall: return String(localized: "Wall painting")
+            case .stickers: return String(localized: "Stickers")
+            case .solid: return String(localized: "Solid colour")
+            case .gradient: return String(localized: "Gradient")
+            case .image: return String(localized: "Image")
             }
         }
         /// What choosing the family alone puts on the wall.
@@ -51,21 +51,21 @@ enum HomeTheme: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .off: return "Off"
-        case .openRoad: return "Open Road"
-        case .desertHighway: return "Desert Highway"
-        case .coastalCliffs: return "Coastal Cliffs"
-        case .mountainLake: return "Mountain Lake"
-        case .riceTerraces: return "Rice Terraces"
-        case .northernLights: return "Northern Lights"
-        case .saturnRise: return "Saturn Rise"
-        case .moonscape: return "Moonscape"
-        case .cityAtNight: return "City at Night"
-        case .monsoonForest: return "Monsoon Forest"
-        case .stickers: return "Stickers"
-        case .solid: return "Solid colour"
-        case .gradient: return "Gradient"
-        case .custom: return "Image"
+        case .off: return String(localized: "Off")
+        case .openRoad: return String(localized: "Open Road")
+        case .desertHighway: return String(localized: "Desert Highway")
+        case .coastalCliffs: return String(localized: "Coastal Cliffs")
+        case .mountainLake: return String(localized: "Mountain Lake")
+        case .riceTerraces: return String(localized: "Rice Terraces")
+        case .northernLights: return String(localized: "Northern Lights")
+        case .saturnRise: return String(localized: "Saturn Rise")
+        case .moonscape: return String(localized: "Moonscape")
+        case .cityAtNight: return String(localized: "City at Night")
+        case .monsoonForest: return String(localized: "Monsoon Forest")
+        case .stickers: return String(localized: "Stickers")
+        case .solid: return String(localized: "Solid colour")
+        case .gradient: return String(localized: "Gradient")
+        case .custom: return String(localized: "Image")
         }
     }
 
@@ -116,7 +116,7 @@ enum HomeTheme: String, CaseIterable, Identifiable {
         panel.allowedContentTypes = [.image]
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
-        panel.prompt = "Choose"
+        panel.prompt = String(localized: "Choose")
         guard panel.runModal() == .OK, let url = panel.url else { return nil }
         return keep(url)
     }
@@ -127,16 +127,16 @@ enum StickerPack: String, CaseIterable, Identifiable, Codable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .space: return "Space"
-        case .roadTrip: return "Road Trip"
-        case .ocean: return "Ocean"
-        case .jungle: return "Jungle"
-        case .streetFood: return "Street Food"
-        case .retroTech: return "Retro Tech"
-        case .weather: return "Weather"
-        case .music: return "Music"
-        case .wonders: return "Wonders"
-        case .search: return "Search"
+        case .space: return String(localized: "stickers.space", defaultValue: "Space") // outer space; "Space" alone is a tab space
+        case .roadTrip: return String(localized: "Road Trip")
+        case .ocean: return String(localized: "Ocean")
+        case .jungle: return String(localized: "Jungle")
+        case .streetFood: return String(localized: "Street Food")
+        case .retroTech: return String(localized: "Retro Tech")
+        case .weather: return String(localized: "Weather")
+        case .music: return String(localized: "Music")
+        case .wonders: return String(localized: "Wonders")
+        case .search: return "Search" // the app's name, never translated
         }
     }
 }
@@ -144,7 +144,15 @@ enum StickerPack: String, CaseIterable, Identifiable, Codable {
 enum GradientPreset: String, CaseIterable, Identifiable {
     case dusk, sea, peach, mint, mono
     var id: String { rawValue }
-    var title: String { rawValue.capitalized }
+    var title: String {
+        switch self {
+        case .dusk: return String(localized: "Dusk")
+        case .sea: return String(localized: "Sea")
+        case .peach: return String(localized: "Peach")
+        case .mint: return String(localized: "Mint")
+        case .mono: return String(localized: "Mono")
+        }
+    }
     var colours: (a: String, b: String, angle: Double) {
         switch self {
         case .dusk: return ("#E9B8A0", "#8E86B8", 150)

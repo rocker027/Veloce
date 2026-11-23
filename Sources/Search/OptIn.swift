@@ -150,9 +150,9 @@ enum OptIn {
 
         var line: String {
             switch self {
-            case .notAnEmail: return "That doesn't look like an email address."
-            case .tooMany: return "Too many tries just now. Wait a few minutes."
-            case .unreachable: return "Couldn't reach searchbrowser.app. Try again in a moment."
+            case .notAnEmail: return String(localized: "That doesn't look like an email address.")
+            case .tooMany: return String(localized: "Too many tries just now. Wait a few minutes.")
+            case .unreachable: return String(localized: "Couldn't reach searchbrowser.app. Try again in a moment.")
             }
         }
     }
@@ -223,7 +223,7 @@ struct OptInForm: View {
     @State private var suggestedFor: String?
 
     /// `start` and `email`: where the form starts, for pictures.
-    init(source: OptIn.Source, betaOnly: Bool = false, button: String = "Join", offersBeta: Bool = true,
+    init(source: OptIn.Source, betaOnly: Bool = false, button: String = String(localized: "Join"), offersBeta: Bool = true,
          store: UserDefaults = Store.settings, compact: Bool = false,
          start: Phase = .idle, email: String = "", beta: Bool = true,
          joined: @escaping (Bool) -> Void = { _ in }) {
@@ -247,7 +247,7 @@ struct OptInForm: View {
             } else {
                 HStack(spacing: 8) {
                     field
-                    Pill(phase == .sending ? "Joining…" : (isFailed ? "Try again" : button), filled: true, action: send)
+                    Pill(phase == .sending ? String(localized: "Joining…") : (isFailed ? String(localized: "Try again") : button), filled: true, action: send)
                         .disabled(phase == .sending || email.trimmingCharacters(in: .whitespaces).isEmpty)
                         .opacity(email.trimmingCharacters(in: .whitespaces).isEmpty ? 0.55 : 1)
                 }
@@ -255,7 +255,7 @@ struct OptInForm: View {
                     hint(suggestion)
                 }
                 if offersBeta && !betaOnly {
-                    Tick(on: $beta, title: "Also send me the iPhone beta")
+                    Tick(on: $beta, title: String(localized: "Also send me the iPhone beta"))
                 }
                 if case .failed(let failure) = phase {
                     Text(failure.line)
@@ -327,10 +327,10 @@ struct OptInForm: View {
     }
 
     private var thanksLine: String {
-        if betaOnly { return "Thanks. We'll email you when your iPhone beta spot opens." }
+        if betaOnly { return String(localized: "Thanks. We'll email you when your iPhone beta spot opens.") }
         return betaSent
-            ? "Thanks, you're on the list. We'll email you when your iPhone beta spot opens."
-            : "Thanks, you're on the list."
+            ? String(localized: "Thanks, you're on the list. We'll email you when your iPhone beta spot opens.")
+            : String(localized: "Thanks, you're on the list.")
     }
 
     private func send() {
@@ -487,13 +487,13 @@ struct OptInSettingsField: View {
                     Image(systemName: "checkmark")
                         .font(.system(size: 10.5, weight: .semibold))
                         .foregroundStyle(Palette.safe)
-                    Text(betaOnly ? "You've asked for the beta." : "You're on the list.")
+                    Text(betaOnly ? String(localized: "You've asked for the beta.") : String(localized: "You're on the list."))
                         .font(.system(size: 12.5))
                         .foregroundStyle(Palette.ink)
-                    Quick(betaOnly ? "Ask for another address" : "Add another address") { another = true }
+                    Quick(betaOnly ? String(localized: "Ask for another address") : String(localized: "Add another address")) { another = true }
                 }
             } else {
-                OptInForm(source: .settings, betaOnly: betaOnly, button: betaOnly ? "Ask" : "Join", offersBeta: false, compact: true) { _ in
+                OptInForm(source: .settings, betaOnly: betaOnly, button: betaOnly ? String(localized: "Ask") : String(localized: "Join"), offersBeta: false, compact: true) { _ in
                     given = true
                 }
                 if !betaOnly { OptInFinePrint(open: open) }

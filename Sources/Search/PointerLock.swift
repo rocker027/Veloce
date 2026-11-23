@@ -174,11 +174,12 @@ private final class PointerLockPanel: NSPanel {
 /// "Press Esc to show your pointer", the key as a key, light on dark
 /// whatever the page is.
 private struct PointerLockHint: View {
-    static let words = "Press Esc to show your pointer"
+    static let words = String(localized: "Press Esc to show your pointer")
 
     var body: some View {
         HStack(spacing: 6) {
-            Text("Press")
+            // Its own key: "Press" alone is full screen's, where it carries "again".
+            Text(String(localized: "pointer.press", defaultValue: "Press"))
             Text("Esc")
                 .font(.system(size: 12, weight: .semibold))
                 .padding(.horizontal, 6)

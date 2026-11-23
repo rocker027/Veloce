@@ -124,7 +124,7 @@ enum SafariApps {
         Task {
             let holds = await Task.detached(priority: .userInitiated) { still(item.folder) }.value
             guard holds else {
-                extensions.browser?.announce("\(item.name) wasn't added — \(item.app) has changed or isn't signed")
+                extensions.browser?.announce(String(localized: "\(item.name) wasn't added — \(item.app) has changed or isn't signed"))
                 return
             }
             extensions.installFolder(at: item.folder, confirm: confirm, fromApp: item.app)
