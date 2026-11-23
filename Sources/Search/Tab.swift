@@ -940,7 +940,7 @@ final class Tab: ObservableObject, Identifiable {
         }
         if !title.isEmpty { return title }
         if let address { return Address.pretty(address) }
-        return "New Tab"
+        return String(localized: "New Tab")
     }
 
     init(shy: Bool = false, bench: Bool = false, configuration: WKWebViewConfiguration? = nil) {
@@ -2512,7 +2512,7 @@ final class PageView: WKWebView {
         if let index = menu.items.firstIndex(where: { $0.identifier?.rawValue == "WKMenuItemIdentifierOpenLinkInNewWindow" }) {
             let item = menu.items[index]
             if let front = item.copy() as? NSMenuItem {
-                front.title = "Open Link in New Tab and Go to It"
+                front.title = String(localized: "Open Link in New Tab and Go to It")
                 front.keyEquivalentModifierMask = .option
                 front.isAlternate = true
                 menu.insertItem(front, at: index + 1)
@@ -2521,7 +2521,7 @@ final class PageView: WKWebView {
             // as a pair. A copy of WebKit's item, for what WebKit reads off
             // it when the action reaches it.
             if Shared.prefs.splitView, let beside = item.copy() as? NSMenuItem {
-                beside.title = "Open Link in Split View"
+                beside.title = String(localized: "Open Link in Split View")
                 beside.identifier = NSUserInterfaceItemIdentifier("SearchOpenLinkInSplitView")
                 beside.keyEquivalentModifierMask = []
                 beside.isAlternate = false
@@ -2548,7 +2548,7 @@ final class PageView: WKWebView {
                 menu.insertItem(shy, at: at)
             }
             openLink = (item.target, item.action)
-            item.title = "Open Link in New Tab"
+            item.title = String(localized: "Open Link in New Tab")
             item.keyEquivalentModifierMask = []
             item.target = self
             item.action = #selector(openLinkBehind(_:))
@@ -2560,7 +2560,7 @@ final class PageView: WKWebView {
             let item = menu.items[index]
             if let clean = item.copy() as? NSMenuItem {
                 copyLink = (item.target, item.action)
-                clean.title = "Copy Clean Link"
+                clean.title = String(localized: "Copy Clean Link")
                 clean.identifier = NSUserInterfaceItemIdentifier("SearchCopyCleanLink")
                 clean.target = self
                 clean.action = #selector(copyCleanLink(_:))
@@ -2568,7 +2568,7 @@ final class PageView: WKWebView {
             }
         } else if let url, CleanLink.clean(url) != url,
                   let index = menu.items.firstIndex(where: { $0.identifier?.rawValue == "WKMenuItemIdentifierReload" }) {
-            let clean = NSMenuItem(title: "Copy Clean Link", action: #selector(copyCleanPage(_:)), keyEquivalent: "")
+            let clean = NSMenuItem(title: String(localized: "Copy Clean Link"), action: #selector(copyCleanPage(_:)), keyEquivalent: "")
             clean.identifier = NSUserInterfaceItemIdentifier("SearchCopyCleanLink")
             clean.target = self
             clean.representedObject = url
@@ -2612,7 +2612,7 @@ final class PageView: WKWebView {
             evaluateJavaScript(PageView.selected, in: nil, in: .defaultClient) { [weak self] result in
                 self?.selection = (try? result.get()) as? String ?? ""
             }
-            item.title = "Search with \(name)"
+            item.title = String(localized: "Search with \(name)")
             item.target = self
             item.action = #selector(searchSelection(_:))
         }
@@ -2630,7 +2630,7 @@ final class PageView: WKWebView {
     func translateItem() -> NSMenuItem? {
         guard PageTranslator.enabled, let on = translating?() else { return nil }
         let language = PageTranslator.name(PageTranslator.code(PageTranslator.preferredTarget))
-        let item = NSMenuItem(title: on ? "Show Original" : "Translate Page to \(language)", action: #selector(translatePage(_:)), keyEquivalent: "")
+        let item = NSMenuItem(title: on ? String(localized: "Show Original") : String(localized: "Translate Page to \(language)"), action: #selector(translatePage(_:)), keyEquivalent: "")
         item.target = self
         return item
     }
@@ -3821,6 +3821,8 @@ enum PageEnd: Int {
         }
     }
 
+    // In English: a tab's failure is also what an agent reads
+    // (AgentControl). It is translated where it is drawn (Wording.shown).
     /// Over the page, once it has stopped being made again.
     var message: String {
         switch self {

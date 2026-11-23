@@ -152,7 +152,7 @@ struct PopupSign: View {
             }
             .buttonStyle(.plain)
             .onHover { hovering = $0 }
-            .help(tab.blockedPopups.count == 1 ? "Pop-up blocked" : "\(tab.blockedPopups.count) pop-ups blocked")
+            .help(tab.blockedPopups.count == 1 ? String(localized: "Pop-up blocked") : String(localized: "\(tab.blockedPopups.count) pop-ups blocked"))
             .accessibilityLabel("Pop-up blocked")
             .popover(isPresented: $showing, hangingFrom: .bottom) {
                 BlockedPopupsMenu(browser: browser, tab: tab) { showing = false }
@@ -176,7 +176,7 @@ struct BlockedPopupsMenu: View {
             BlockedPopups.openable(popup.url).map { (popup, $0) }
         }
         VStack(alignment: .leading, spacing: 0) {
-            Text(tab.blockedPopups.count == 1 ? "Pop-up blocked" : "\(tab.blockedPopups.count) pop-ups blocked")
+            Text(tab.blockedPopups.count == 1 ? String(localized: "Pop-up blocked") : String(localized: "\(tab.blockedPopups.count) pop-ups blocked"))
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(Palette.muted)
                 .padding(.horizontal, 16)
@@ -185,7 +185,7 @@ struct BlockedPopupsMenu: View {
             if !openable.isEmpty {
                 VStack(spacing: 1) {
                     ForEach(openable, id: \.0.id) { popup, url in
-                        Item(symbol: "arrow.up.forward.square", title: "Open \(BlockedPopups.label(url))") {
+                        Item(symbol: "arrow.up.forward.square", title: String(localized: "Open \(BlockedPopups.label(url))")) {
                             browser.openBlocked(popup, from: tab)
                             done()
                         }
@@ -197,11 +197,11 @@ struct BlockedPopupsMenu: View {
             if let site {
                 Divider().overlay(Palette.hairline)
                 Item(symbol: "checkmark.circle",
-                     title: tab.shy ? "Allow Pop-ups from \(site) in This Tab" : "Always Allow Pop-ups from \(site)", lines: 2) {
+                     title: tab.shy ? String(localized: "Allow Pop-ups from \(site) in This Tab") : String(localized: "Always Allow Pop-ups from \(site)"), lines: 2) {
                     browser.allowPopups(from: tab)
                     done()
                 }
-                .help(tab.shy ? "Only until this private tab closes" : "Settings › Privacy lists the sites you allow")
+                .help(tab.shy ? String(localized: "Only until this private tab closes") : String(localized: "Settings › Privacy lists the sites you allow"))
                 .padding(6)
             }
         }
@@ -241,8 +241,8 @@ struct PopupSiteList: View {
     var body: some View {
         ForEach(prefs.popupSites.sorted(), id: \.self) { site in
             Rule()
-            Line(site, "Can open pop-ups without a click") {
-                Pill("Remove") { prefs.popupSites.remove(site) }
+            Line(site, String(localized: "Can open pop-ups without a click")) {
+                Pill(String(localized: "Remove")) { prefs.popupSites.remove(site) }
             }
         }
     }

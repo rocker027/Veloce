@@ -763,7 +763,7 @@ struct SidePanelView: View {
                         .foregroundStyle(Palette.ink)
                         .lineLimit(1)
                     Spacer(minLength: 0)
-                    Door(icon: "xmark", help: "Close") { browser.closeSidePanel() }
+                    Door(icon: "xmark", help: String(localized: "Close")) { browser.closeSidePanel() }
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
@@ -826,8 +826,8 @@ private struct SiteLine: View {
                 .lineLimit(1)
                 .truncationMode(.middle)
             Spacer(minLength: 0)
-            Door(icon: "arrow.up.forward.square", help: "Open in a Tab") { browser.sitePanelToTab() }
-            Door(icon: "xmark", help: "Close") { browser.closeSidePanel() }
+            Door(icon: "arrow.up.forward.square", help: String(localized: "Open in a Tab")) { browser.sitePanelToTab() }
+            Door(icon: "xmark", help: String(localized: "Close")) { browser.closeSidePanel() }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)

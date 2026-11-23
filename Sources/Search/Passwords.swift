@@ -11,11 +11,11 @@ struct PasswordsPanel: View {
     @State private var adding = false
 
     var body: some View {
-        Plate("Passwords", width: 620, close: { browser.managing = false }) {
+        Plate(String(localized: "Passwords"), width: 620, close: { browser.managing = false }) {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(spacing: 10) {
-                    Hunt(text: $browser.hunting, prompt: "Search sites and accounts", focus: $hunting)
-                    Pill(adding ? "Cancel" : "Add", filled: !adding) { adding.toggle() }
+                    Hunt(text: $browser.hunting, prompt: String(localized: "Search sites and accounts"), focus: $hunting)
+                    Pill(adding ? String(localized: "Cancel") : String(localized: "Add"), filled: !adding) { adding.toggle() }
                 }
 
                 if adding {
@@ -26,8 +26,8 @@ struct PasswordsPanel: View {
                 if browser.shownSites.isEmpty {
                     Card {
                         Nothing(browser.saved.isEmpty
-                                ? "Nothing kept yet. Sign in somewhere and say yes, or bring yours in below."
-                                : "Nothing matches.")
+                                ? String(localized: "Nothing kept yet. Sign in somewhere and say yes, or bring yours in below.")
+                                : String(localized: "Nothing matches."))
                     }
                 } else {
                     ScrollView(showsIndicators: false) {
@@ -56,19 +56,19 @@ struct PasswordsPanel: View {
                         .font(.system(size: 12))
                         .foregroundStyle(Palette.muted)
                     // Which browser, which profile and what of it: the sheet.
-                    Pill("Bring in…") { browser.lead(to: InternalPage(.importing)) }
-                    Pill("File…") { browser.importFile() }
+                    Pill(String(localized: "Bring in…")) { browser.lead(to: InternalPage(.importing)) }
+                    Pill(String(localized: "File…")) { browser.importFile() }
                     Spacer(minLength: 0)
                     // What the list shows, all of it or what the search
                     // leaves: never more than can be seen (Browser.forgetShown).
                     let shown = browser.shownSites.reduce(0) { $0 + $1.logins.count }
                     if shown > 0 {
-                        Pill(browser.hunting.trimmingCharacters(in: .whitespaces).isEmpty ? "Remove All…" : "Remove \(shown)…") {
+                        Pill(browser.hunting.trimmingCharacters(in: .whitespaces).isEmpty ? String(localized: "Remove All…") : String(localized: "Remove \(shown)…")) {
                             browser.forgetShown()
                         }
                         .disabled(browser.forgetting)
                     }
-                    Text(browser.saved.count == 1 ? "1 password" : "\(browser.saved.count) passwords")
+                    Text(browser.saved.count == 1 ? String(localized: "1 password") : String(localized: "\(browser.saved.count) passwords"))
                         .font(.system(size: 12))
                         .foregroundStyle(Palette.muted)
                 }
@@ -158,7 +158,7 @@ struct PasswordsPanel: View {
 
         var body: some View {
             HStack(spacing: 10) {
-                Text(login.user.isEmpty ? "No username" : login.user)
+                Text(login.user.isEmpty ? String(localized: "No username") : login.user)
                     .font(.system(size: 12))
                     .foregroundStyle(login.user.isEmpty ? Palette.faint : Palette.ink)
                     .lineLimit(1)
@@ -181,9 +181,9 @@ struct PasswordsPanel: View {
                 Spacer(minLength: 8)
 
                 if hovering || shown {
-                    Quick(shown ? "Hide" : "Show") { shown ? conceal() : reveal() }
-                    Quick("Copy", act: copy)
-                    Quick("Remove", tint: .red.opacity(0.75), act: forget)
+                    Quick(shown ? String(localized: "Hide") : String(localized: "Show")) { shown ? conceal() : reveal() }
+                    Quick(String(localized: "Copy"), act: copy)
+                    Quick(String(localized: "Remove"), tint: .red.opacity(0.75), act: forget)
                 }
             }
             .padding(.horizontal, 10)
@@ -197,7 +197,7 @@ struct PasswordsPanel: View {
         }
 
         private func reveal() {
-            Vault.prove("show the password for \(login.host)") { ok in
+            Vault.prove(String(localized: "show the password for \(login.host)")) { ok in
                 // Read after the Mac has said who this is, not before: the
                 // secret is asked for here and let go with the row.
                 guard ok, let password = Vault.secret(of: login) else { return }
@@ -233,8 +233,8 @@ struct PasswordsPanel: View {
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
-                    field("Site", text: $site, tag: 0)
-                    field("Username", text: $user, tag: 1)
+                    field(String(localized: "Site"), text: $site, tag: 0)
+                    field(String(localized: "Username"), text: $user, tag: 1)
                 }
                 HStack(spacing: 8) {
                     ZStack(alignment: .leading) {
@@ -252,7 +252,7 @@ struct PasswordsPanel: View {
                             .padding(.vertical, 7)
                     }
                     .background(Palette.wash, in: RoundedRectangle(cornerRadius: 9, style: .continuous))
-                    Pill("Save", filled: true, action: keep)
+                    Pill(String(localized: "Save"), filled: true, action: keep)
                         .disabled(Vault.host(of: site).isEmpty || password.isEmpty)
                 }
             }

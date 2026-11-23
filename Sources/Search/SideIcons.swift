@@ -70,12 +70,12 @@ enum IconTiles {
 
     /// The tooltip: the title, then what a row would have said beside it.
     static func tip(_ tab: Tab, address: AtRest?) -> String {
-        var lines = [tab.label.isEmpty ? "New Tab" : tab.label]
+        var lines = [tab.label.isEmpty ? String(localized: "New Tab") : tab.label]
         if let address { lines.append(address.lead + address.name + address.tail) }
         var marks: [String] = []
-        if tab.shy { marks.append("Private") }
-        if tab.recording { marks.append("Recording") }
-        if !tab.loading && tab.muted { marks.append("Muted") } else if !tab.loading && tab.noisy { marks.append("Playing sound") }
+        if tab.shy { marks.append(String(localized: "Private")) }
+        if tab.recording { marks.append(String(localized: "Recording")) }
+        if !tab.loading && tab.muted { marks.append(String(localized: "Muted")) } else if !tab.loading && tab.noisy { marks.append(String(localized: "Playing sound")) }
         if !marks.isEmpty { lines.append(marks.joined(separator: " · ")) }
         return lines.joined(separator: "\n")
     }
@@ -257,7 +257,7 @@ private struct CornerSpeaker: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        .help(tab.muted ? "Unmute Tab" : "Mute Tab")
+        .help(tab.muted ? String(localized: "Unmute Tab") : String(localized: "Mute Tab"))
         .offset(x: 3, y: 3)
     }
 }

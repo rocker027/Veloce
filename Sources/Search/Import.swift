@@ -212,22 +212,22 @@ enum Chromium {
         var message: String {
             let looked = source.root.path.replacingOccurrences(of: NSHomeDirectory(), with: "~")
             guard let error else {
-                return "\(source.name) is on this Mac, but no browser profile was found in \(looked)."
+                return String(localized: "\(source.name) is on this Mac, but no browser profile was found in \(looked).")
             }
             let failure = error as NSError
             if failure.domain == NSCocoaErrorDomain && failure.code == NSFileReadNoSuchFileError {
-                return "\(source.name) is on this Mac, but its data folder was not found at \(looked)."
+                return String(localized: "\(source.name) is on this Mac, but its data folder was not found at \(looked).")
             }
             if partial {
                 let reason = Self.permissionDenied(failure)
-                    ? "macOS hasn't allowed Search to read all of them."
+                    ? String(localized: "macOS hasn't allowed Search to read all of them.")
                     : failure.localizedDescription
-                return "Some of \(source.name)'s profiles in \(looked) couldn't be read: \(reason) Choose its data folder in Settings › Bring Things Over to allow access for this session."
+                return String(localized: "Some of \(source.name)'s profiles in \(looked) couldn't be read: \(reason) Choose its data folder in Settings › Bring Things Over to allow access for this session.")
             }
             if Self.permissionDenied(failure) {
-                return "macOS hasn't allowed Search to read \(source.name)'s data in \(looked). Choose its data folder in Settings › Bring Things Over to allow access for this session."
+                return String(localized: "macOS hasn't allowed Search to read \(source.name)'s data in \(looked). Choose its data folder in Settings › Bring Things Over to allow access for this session.")
             }
-            return "Search couldn't read \(source.name)'s data in \(looked): \(failure.localizedDescription)"
+            return String(localized: "Search couldn't read \(source.name)'s data in \(looked): \(failure.localizedDescription)")
         }
 
         private static func permissionDenied(_ error: NSError) -> Bool {
@@ -1450,7 +1450,17 @@ enum ImportSource: Identifiable, Hashable {
 
     /// The same, as a line: "Bookmarks, history, passwords and open tabs".
     var canBringLine: String {
-        let line = ListFormatter.localizedString(byJoining: canBring)
+        // canBring stays English: the bench reads it. Only the line is drawn.
+        let words = canBring.map { word -> String in
+            switch word {
+            case "bookmarks": return String(localized: "bookmarks")
+            case "history": return String(localized: "history")
+            case "passwords": return String(localized: "passwords")
+            case "spaces & pins": return String(localized: "spaces & pins")
+            default: return String(localized: "open tabs")
+            }
+        }
+        let line = ListFormatter.localizedString(byJoining: words)
         return line.prefix(1).uppercased() + line.dropFirst()
     }
 
@@ -1495,7 +1505,7 @@ enum ImportSource: Identifiable, Hashable {
         case .webkit(let s):
             let names = s.names
             return s.profiles.map(\.lastPathComponent)
-                .map { Profile(id: $0, name: names[$0] ?? ($0 == "Defaults" ? "Default" : $0)) }
+                .map { Profile(id: $0, name: names[$0] ?? ($0 == "Defaults" ? String(localized: "Default") : $0)) }
         }
     }
 

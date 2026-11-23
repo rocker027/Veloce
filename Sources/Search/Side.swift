@@ -1628,13 +1628,13 @@ struct SideBar: View {
     private var newTab: some View {
         if icons {
             Quiet(icon: "plus", title: "", height: rowHeight, size: prefs.sideTitle, centred: true) { browser.launch() }
-                .shortcutHelp("New Tab", "file.newTab")
+                .shortcutHelp(String(localized: "New Tab"), "file.newTab")
                 // The column's menu on a right-click, as round it.
                 .overlay { RightClick(menu: columnMenu) }
                 .padding(.top, SideBar.gap)
         } else {
-            Quiet(icon: "plus", title: "New tab", height: rowHeight, size: prefs.sideTitle) { browser.launch() }
-                .shortcutHelp("New Tab", "file.newTab")
+            Quiet(icon: "plus", title: String(localized: "New tab"), height: rowHeight, size: prefs.sideTitle) { browser.launch() }
+                .shortcutHelp(String(localized: "New Tab"), "file.newTab")
                 .overlay { RightClick(menu: columnMenu) }
                 .padding(.top, SideBar.gap)
         }
@@ -2404,7 +2404,7 @@ struct Speaker: View {
         }
         .buttonStyle(.plain)
         .onHover { hovering = $0 }
-        .help(tab.muted ? "Unmute Tab" : "Mute Tab")
+        .help(tab.muted ? String(localized: "Unmute Tab") : String(localized: "Mute Tab"))
         .animation(Motion.quick, value: hovering)
     }
 }

@@ -38,7 +38,7 @@ extension MozillaSession {
                     if snapshot.groups[made] == nil {
                         if group.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             unnamed += 1
-                            snapshot.groups[made] = .init(title: "Group \(unnamed)", collapsed: group.collapsed)
+                            snapshot.groups[made] = .init(title: String(localized: "Group \(unnamed)"), collapsed: group.collapsed)
                         } else {
                             snapshot.groups[made] = .init(title: SessionImport.titled(group.title, for: nil), collapsed: group.collapsed)
                         }

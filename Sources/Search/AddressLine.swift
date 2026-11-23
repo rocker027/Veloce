@@ -22,8 +22,8 @@ enum AddressWidth: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .small: return "Small"
-        case .medium: return "Medium"
+        case .small: return String(localized: "Small")
+        case .medium: return String(localized: "Medium")
         }
     }
 
@@ -68,14 +68,14 @@ struct AddressLine: View {
                 if browser.editingInline {
                     AddressField(browser: browser, size: 12)
                 } else {
-                    Text(address.isEmpty ? "Search or enter address" : address)
+                    Text(address.isEmpty ? String(localized: "Search or enter address") : address)
                         .foregroundStyle(address.isEmpty ? Palette.faint : Palette.muted)
                         .lineLimit(1)
                         .truncationMode(.middle)
                     Spacer(minLength: 0)
                     // The site card (#1240), for a page on the web.
                     if tab.isWeb {
-                        button("slider.horizontal.3", help: "Site Settings") {
+                        button("slider.horizontal.3", help: String(localized: "Site Settings")) {
                             guard let under = line.view, let from = options.view else { return }
                             SiteCardPanel.toggle(for: tab, in: browser, under: under, button: from)
                         }
@@ -92,7 +92,7 @@ struct AddressLine: View {
             .background(ViewAnchor(box: line))
             .contentShape(Rectangle())
             .onTapGesture { if !browser.editing { browser.edit(); browser.inlineEdit = true } }
-            .shortcutHelp("Type an address or a search", "file.openAddress")
+            .shortcutHelp(String(localized: "Type an address or a search"), "file.openAddress")
             // ⌘L's suggestions, hanging under the line at its width.
             .overlay(alignment: .topLeading) {
                 if browser.editingInline {

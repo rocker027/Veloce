@@ -123,21 +123,21 @@ struct AccountList: View {
         switch choice {
         case .passkey(let passkey):
             Row(mark: .symbol("person.badge.key"), name: passkey.name,
-                detail: "Passkey" + (passkey.provider.map { " · \($0)" } ?? ""), lit: lit) { browser.choose(passkey) }
+                detail: passkey.provider.map { String(localized: "Passkey · \($0)") } ?? String(localized: "Passkey"), lit: lit) { browser.choose(passkey) }
         case .login(let login):
             Row(mark: .letter(login.user.first.map { String($0).uppercased() } ?? "•"),
-                name: login.user.isEmpty ? "No name" : login.user, detail: login.host, lit: lit) { browser.choose(login) }
+                name: login.user.isEmpty ? String(localized: "No name") : login.user, detail: login.host, lit: lit) { browser.choose(login) }
         case .apple(let login):
             // The Mac's Passwords app, when turned on (ApplePasswords.swift):
             // marked as Apple's.
             Row(mark: .letter(login.user.first.map { String($0).uppercased() } ?? "•"),
-                name: login.user.isEmpty ? "No name" : login.user, detail: "Apple Passwords", lit: lit) { browser.choose(login) }
+                name: login.user.isEmpty ? String(localized: "No name") : login.user, detail: String(localized: "Apple Passwords"), lit: lit) { browser.choose(login) }
         case .code(let code):
-            Row(mark: .symbol("number"), name: code.user.isEmpty ? "Verification code" : code.user,
-                detail: code.user.isEmpty ? "Apple Passwords" : "Verification code · Apple Passwords", lit: lit) { browser.choose(code) }
+            Row(mark: .symbol("number"), name: code.user.isEmpty ? String(localized: "Verification code") : code.user,
+                detail: code.user.isEmpty ? String(localized: "Apple Passwords") : String(localized: "Verification code · Apple Passwords"), lit: lit) { browser.choose(code) }
         case .connect:
-            Row(mark: .symbol("key.icloud"), name: "Connect Apple Passwords…",
-                detail: "Pair once with a code from your Mac", lit: lit) { browser.connectApplePasswords() }
+            Row(mark: .symbol("key.icloud"), name: String(localized: "Connect Apple Passwords…"),
+                detail: String(localized: "Pair once with a code from your Mac"), lit: lit) { browser.connectApplePasswords() }
         case .offer:
             OfferRow(lit: lit, use: browser.useApplePasswords, never: browser.neverOfferApplePasswords)
         case .contact(let contact):
@@ -162,10 +162,10 @@ struct AccountList: View {
     }
 
     private var footer: String {
-        if contactsOnly { return "From your card in Contacts" }
-        if asked.logins.isEmpty && asked.apple.isEmpty && asked.codes.isEmpty && !asked.appleConnect { return "Passkeys on this Mac" }
-        if asked.logins.isEmpty { return "From Apple Passwords" }
-        return asked.apple.isEmpty ? "From your keychain" : "From your keychain and Apple Passwords"
+        if contactsOnly { return String(localized: "From your card in Contacts") }
+        if asked.logins.isEmpty && asked.apple.isEmpty && asked.codes.isEmpty && !asked.appleConnect { return String(localized: "Passkeys on this Mac") }
+        if asked.logins.isEmpty { return String(localized: "From Apple Passwords") }
+        return asked.apple.isEmpty ? String(localized: "From your keychain") : String(localized: "From your keychain and Apple Passwords")
     }
 
     private enum Mark { case letter(String), symbol(String) }

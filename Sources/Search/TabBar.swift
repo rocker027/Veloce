@@ -251,7 +251,7 @@ struct TabBar: View {
                             )
                     }
                     .buttonStyle(.plain)
-                    .shortcutHelp("New Tab", "file.newTab")
+                    .shortcutHelp(String(localized: "New Tab"), "file.newTab")
                     .onHover { plussed = $0 }
                     .opacity(nearby ? 1 : 0)
                     .scaleEffect(nearby ? 1 : 0.7, anchor: .leading)
@@ -799,12 +799,12 @@ struct Helm: View {
             Helm.stack(vertical) {
                 // Each can be hidden in Settings › Appearance (idea 815).
                 if !browser.prefs.hidesBack {
-                    Door(icon: "chevron.left", help: "Back", shortcut: "tabs.back", held: { Rewind.menu(tab, back: true) }) { browser.back() }
+                    Door(icon: "chevron.left", help: String(localized: "Back"), shortcut: "tabs.back", held: { Rewind.menu(tab, back: true) }) { browser.back() }
                         .disabled(!back)
                         .opacity(back ? 1 : 0.3)
                 }
                 if !browser.prefs.hidesForward {
-                    Door(icon: "chevron.right", help: "Forward", shortcut: "tabs.forward", held: { Rewind.menu(tab, back: false) }) { browser.forward() }
+                    Door(icon: "chevron.right", help: String(localized: "Forward"), shortcut: "tabs.forward", held: { Rewind.menu(tab, back: false) }) { browser.forward() }
                         .disabled(!forward)
                         .opacity(forward ? 1 : 0.3)
                 }
@@ -813,7 +813,7 @@ struct Helm: View {
                 Door(
                     icon: tab.loading ? "xmark" : "arrow.clockwise",
                     // Stop's ⌘. is the Mac's own, not one of Settings › Shortcuts.
-                    help: tab.loading ? "Stop   ⌘." : "Reload",
+                    help: tab.loading ? String(localized: "Stop   ⌘.") : String(localized: "Reload"),
                     shortcut: tab.loading ? nil : "view.reload"
                 ) {
                     if tab.loading { tab.stop() } else { browser.reload() }
@@ -1903,7 +1903,7 @@ struct TabMenu: View {
         } else {
             // A split pinned whole is rows only.
             if rows && browser.pinnedPair(of: tab) == nil {
-                Button(tab.listed ? "Show as Square" : "Show as Row") { browser.setListed(tab, !tab.listed) }
+                Button(tab.listed ? String(localized: "Show as Square") : String(localized: "Show as Row")) { browser.setListed(tab, !tab.listed) }
             }
             // Settings › Tabs › Folders in pinned rows: a row of this
             // space's own into a folder, a new one or one there is.
@@ -1944,7 +1944,7 @@ struct TabMenu: View {
             // but the pair's partner wouldn't — one would stay here, breaking
             // the pair in every other space.
             if browser.prefs.showsSharedPins, browser.pinnedPair(of: tab) == nil {
-                Button(tab.everywhere ? "Only in This Space" : "Keep in Every Space") {
+                Button(tab.everywhere ? String(localized: "Only in This Space") : String(localized: "Keep in Every Space")) {
                     if tab.everywhere { browser.keepHere(tab) } else { browser.shareEverywhere(tab) }
                 }
             }
@@ -2007,7 +2007,7 @@ struct TabMenu: View {
                     Button("Remove from Split View") { browser.leaveSplit(tab) }
                 }
                 Button("Separate Split Tabs") { browser.detachSplit(tab) }
-                Button(pair.tabs.count > 2 ? "Close All Pages" : "Close Both Pages") {
+                Button(pair.tabs.count > 2 ? String(localized: "Close All Pages") : String(localized: "Close Both Pages")) {
                     browser.focusPane(tab)
                     browser.closeSplit()
                 }
@@ -2016,7 +2016,7 @@ struct TabMenu: View {
                 // page beside it. On a split with room, one more page in it.
                 let current = browser.active
                 let adding = browser.activeSplit != nil && current?.id != tab.id
-                Button(adding ? "Add to Split View" : "Open in Split View") { browser.openInSplit(tab) }
+                Button(adding ? String(localized: "Add to Split View") : String(localized: "Open in Split View")) { browser.openInSplit(tab) }
                     .disabled(tab.bench || (adding && current.map { !browser.canJoin(tab, beside: $0) } ?? true))
             }
         }
@@ -2073,13 +2073,14 @@ struct TabMenu: View {
             Button("Open in Side Panel") { browser.openInSidePanel(tab) }
                 .disabled(!tab.isWeb || tab.shy)
         }
-        Button(tab.muted ? "Unmute Tab" : "Mute Tab") { tab.toggleMute() }
+        Button(tab.muted ? String(localized: "Unmute Tab") : String(localized: "Mute Tab")) { tab.toggleMute() }
         // Its page let go of now, as it would be after half an hour unseen:
         // the row keeps its title and picture, and it loads again when gone
         // to. Not the tab on screen, nor one that has to stay awake (#310).
         Button("Put to Sleep") {
             browser.sleep(tab) { outcome in
-                if outcome != "asleep" { browser.announce("Stays awake: \(outcome)") }
+                // The reason stays English for the bench; drawn in the app's language.
+                if outcome != "asleep" { browser.announce(String(localized: "Stays awake: \(Wording.shown(outcome))")) }
             }
         }
         .disabled(browser.awake(because: tab) != nil)
@@ -2087,7 +2088,7 @@ struct TabMenu: View {
         Button("Close Tab", action: close)
         Button("Close Other Tabs") { browser.closeOthers(but: tab) }
             .disabled(browser.tabs.count < 2)
-        Button(browser.prefs.sidebar ? "Close Tabs Below" : "Close Tabs to the Right") { browser.closeTabsBelow(tab) }
+        Button(browser.prefs.sidebar ? String(localized: "Close Tabs Below") : String(localized: "Close Tabs to the Right")) { browser.closeTabsBelow(tab) }
             .disabled(browser.tabsBelow(tab).isEmpty)
         // ⌘⇧T, and the History menu's Recently Closed, where few think to
         // look for it: here too, where tabs are closed.

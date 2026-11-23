@@ -135,8 +135,8 @@ enum GlassStyle: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .frosted: return "Frosted"
-        case .liquid: return "Liquid"
+        case .frosted: return String(localized: "Frosted")
+        case .liquid: return String(localized: "Liquid")
         }
     }
 

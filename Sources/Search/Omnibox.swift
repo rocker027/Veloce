@@ -555,13 +555,13 @@ struct AddressField: NSViewRepresentable {
     /// will open, since the field looks the same whichever key raised it.
     /// In the address bar there is no doubt where: it is the tab's own.
     private static func placeholderWords(for browser: Browser) -> String {
-        if let site = browser.siteChip { return "Search \(site.name)" }
-        if browser.editingInline { return "Enter a web address" }
+        if let site = browser.siteChip { return String(localized: "Search \(site.name)") }
+        if browser.editingInline { return String(localized: "Enter a web address") }
         switch browser.fieldMode {
-        case .blank: return "Enter a web address"
-        case .newTab: return "New tab: enter a web address"
-        case .thisTab: return "This tab: enter a web address"
-        case .switcher: return "Switch to an open tab"
+        case .blank: return String(localized: "Enter a web address")
+        case .newTab: return String(localized: "New tab: enter a web address")
+        case .thisTab: return String(localized: "This tab: enter a web address")
+        case .switcher: return String(localized: "Switch to an open tab")
         }
     }
 
@@ -569,10 +569,10 @@ struct AddressField: NSViewRepresentable {
     /// after the placeholder has gone.
     private static func accessibilityName(for browser: Browser) -> String {
         switch browser.fieldMode {
-        case .blank: return "Address"
-        case .newTab: return "Address, new tab"
-        case .thisTab: return "Address, this tab"
-        case .switcher: return "Switch to an open tab"
+        case .blank: return String(localized: "Address")
+        case .newTab: return String(localized: "Address, new tab")
+        case .thisTab: return String(localized: "Address, this tab")
+        case .switcher: return String(localized: "Switch to an open tab")
         }
     }
 

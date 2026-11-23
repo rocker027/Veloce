@@ -23,9 +23,9 @@ enum FastPages: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .never: return "Never"
-        case .onPower: return "On power"
-        case .always: return "Always"
+        case .never: return String(localized: "Never")
+        case .onPower: return String(localized: "On power")
+        case .always: return String(localized: "Always")
         }
     }
 }

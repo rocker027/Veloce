@@ -421,7 +421,7 @@ final class LittleWindow: NSObject, NSWindowDelegate {
         guard let url = tab.address else { return }
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(markdown ? Browser.markdownLink(tab.label, url) : url.absoluteString, forType: .string)
-        note.say(markdown ? "Link copied" : "Address copied")
+        note.say(markdown ? String(localized: "Link copied") : String(localized: "Address copied"))
     }
 
     /// Into the browser's row, after the tab on screen (never among the
@@ -546,7 +546,7 @@ struct LittleView: View {
                     .truncationMode(.head)
                 Spacer(minLength: 0)
                 if let keep {
-                    Pill("Open in Search", action: keep)
+                    Pill(String(localized: "Open in Search"), action: keep)
                         .help("Open in Search   ⌘O")
                 } else {
                     Spacer().frame(width: 64)
@@ -558,7 +558,7 @@ struct LittleView: View {
                 WebStage(page: tab.built ?? tab.web)
                 // A page that never came says so, with Try again, as in a tab.
                 if let failure = tab.failure {
-                    Trouble(message: failure) { tab.reload() }
+                    Trouble(message: Wording.shown(failure)) { tab.reload() }
                         .transition(.opacity)
                 }
                 Swiping(pulling: tab.pulling)
@@ -583,9 +583,9 @@ struct LittleView: View {
         guard let url = arrived ?? opened else { return "" }
         switch url.scheme?.lowercased() {
         case "https": return SiteCard.site(url)
-        case "http": return "Not secure — " + SiteCard.site(url)
-        case "chrome-extension", "webkit-extension": return "Extension page"
-        default: return url.absoluteString == "about:blank" ? "" : "Not a website"
+        case "http": return String(localized: "Not secure — \(SiteCard.site(url))")
+        case "chrome-extension", "webkit-extension": return String(localized: "Extension page")
+        default: return url.absoluteString == "about:blank" ? "" : String(localized: "Not a website")
         }
     }
 

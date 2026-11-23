@@ -207,9 +207,9 @@ final class ApplePasswords: ObservableObject {
             // on the screen of whoever is working beside it, and ask their
             // real Passwords app. Tests hand in a helper of their own.
             guard !Store.testing else { throw Unavailable(errorDescription: "Apple's Passwords helper isn't run in a test") }
-            guard #available(macOS 15.4, *) else { throw Unavailable(errorDescription: "Needs macOS 15.4 or later") }
+            guard #available(macOS 15.4, *) else { throw Unavailable(errorDescription: String(localized: "Needs macOS 15.4 or later")) }
             guard let program = AppleHelper.program() else {
-                throw Unavailable(errorDescription: "Apple's Passwords helper isn't on this Mac")
+                throw Unavailable(errorDescription: String(localized: "Apple's Passwords helper isn't on this Mac"))
             }
             return HelperLink(program: program)
         }
@@ -252,7 +252,7 @@ final class ApplePasswords: ObservableObject {
                 let hello = try await request(AppleMessages.hello(), timeout: 5)
                 let capabilities = hello["capabilities"] as? [String: Any] ?? [:]
                 if let version = capabilities["secretSessionVersion"] as? Int, version != 1 {
-                    throw Unavailable(errorDescription: "This Mac's Passwords helper is too old")
+                    throw Unavailable(errorDescription: String(localized: "This Mac's Passwords helper is too old"))
                 }
                 fillsCodes = capabilities["canFillOneTimeCodes"] as? Bool ?? false
                 let client = SRPClient(base64: capabilities["shouldUseBase64"] as? Bool ?? false)
@@ -278,7 +278,7 @@ final class ApplePasswords: ObservableObject {
 
     /// The Settings row's title while not connected or starting.
     nonisolated static func title(state: State, trouble: String?, connecting: Bool) -> String {
-        state == .starting && connecting ? "Connecting…" : trouble ?? "Not connected"
+        state == .starting && connecting ? String(localized: "Connecting…") : trouble ?? String(localized: "Not connected")
     }
 
     nonisolated static let holdsBrowserEntitlement: Bool = {
@@ -314,7 +314,7 @@ final class ApplePasswords: ObservableObject {
             self.numbers = nil
             self.client = nil
             state = .idle
-            trouble = "That code didn't match. Connect again for a new one."
+            trouble = String(localized: "That code didn't match. Connect again for a new one.")
         } catch {
             guard pairing == dropped else { return }
             fail(error, stop: true)
@@ -454,7 +454,7 @@ final class ApplePasswords: ObservableObject {
         case AppleCommand.passwordsDisabled.rawValue, AppleCommand.reloginNeeded.rawValue:
             // iCloud Keychain turned off, or signed out: the pairing is over.
             disconnect(because: "the helper said \(command == AppleCommand.passwordsDisabled.rawValue ? "passwords are off" : "sign in again")")
-            trouble = "Apple Passwords needs you to sign in again"
+            trouble = String(localized: "Apple Passwords needs you to sign in again")
         default:
             resolve(command, with: .success(message))
         }
@@ -553,7 +553,7 @@ final class ApplePasswords: ObservableObject {
         switch error {
         case ApplePasswordsError.status(9), ApplePasswordsError.gone, ApplePasswordsError.notTheHelper:
             disconnect(because: "a request failed (\(String(describing: error)))")
-            trouble = "Apple Passwords was disconnected. Connect again to use it."
+            trouble = String(localized: "Apple Passwords was disconnected. Connect again to use it.")
         default:
             Self.log.info("A request failed, pairing kept: \(String(describing: error), privacy: .public), \(self.context, privacy: .public)")
         }
@@ -568,13 +568,13 @@ final class ApplePasswords: ObservableObject {
 
     nonisolated static func words(for error: Error) -> String {
         switch error {
-        case let error as Unavailable: return error.errorDescription ?? "Apple Passwords isn't available"
-        case ApplePasswordsError.timedOut: return "Apple's Passwords helper didn't answer"
-        case ApplePasswordsError.gone: return "Apple's Passwords helper wouldn't run for this copy of Search"
-        case ApplePasswordsError.notTheHelper: return "The pairing couldn't be checked. Connect again."
+        case let error as Unavailable: return error.errorDescription ?? String(localized: "Apple Passwords isn't available")
+        case ApplePasswordsError.timedOut: return String(localized: "Apple's Passwords helper didn't answer")
+        case ApplePasswordsError.gone: return String(localized: "Apple's Passwords helper wouldn't run for this copy of Search")
+        case ApplePasswordsError.notTheHelper: return String(localized: "The pairing couldn't be checked. Connect again.")
         case ApplePasswordsError.badHello, ApplePasswordsError.malformed:
-            return "Apple's Passwords helper answered in a way Search doesn't know"
-        default: return "Apple Passwords isn't available on this Mac"
+            return String(localized: "Apple's Passwords helper answered in a way Search doesn't know")
+        default: return String(localized: "Apple Passwords isn't available on this Mac")
         }
     }
 

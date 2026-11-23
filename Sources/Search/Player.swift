@@ -105,10 +105,10 @@ struct PlayerRow: View {
             if tab.stilled && hovering {
                 // Paused from here and not wanted again: the row goes until
                 // the tab plays again.
-                PlayerButton(symbol: "xmark", help: "Put Away") { tab.stilled = false }
+                PlayerButton(symbol: "xmark", help: String(localized: "Put Away")) { tab.stilled = false }
                     .transition(.opacity)
             }
-            PlayerButton(symbol: tab.stilled ? "play.fill" : "pause.fill", help: tab.stilled ? "Play" : "Pause") {
+            PlayerButton(symbol: tab.stilled ? "play.fill" : "pause.fill", help: tab.stilled ? String(localized: "Play") : String(localized: "Pause")) {
                 if tab.stilled { tab.playAgain() } else { tab.still() }
             }
         }

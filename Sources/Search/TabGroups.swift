@@ -157,7 +157,7 @@ struct GroupHeading: View {
         .onTapGesture { browser.toggleTabGroup(group.id) }
         .modifier(GroupHeadingShared(browser: browser, group: group, dragSpace: dragSpace, dropping: $dropping))
         .onHover { hovering = $0 }
-        .help(group.collapsed ? "\(group.name) — folded" : group.name)
+        .help(group.collapsed ? String(localized: "\(group.name) — folded") : group.name)
         .accessibilityLabel(group.name)
         // Rename Group: no room for the name here, so it is typed beside.
         .popover(isPresented: Binding(get: { editing }, set: { if !$0 { browser.editingGroupID = nil } }),
@@ -282,7 +282,7 @@ private struct GroupHeadingShared: ViewModifier {
                 Button("New Tab in Group") { browser.newTab(inGroup: group.id) }
                 Divider()
                 Button("Rename Group") { browser.editingGroupID = group.id }
-                Button(group.collapsed ? "Expand Group" : "Collapse Group") { browser.toggleTabGroup(group.id) }
+                Button(group.collapsed ? String(localized: "Expand Group") : String(localized: "Collapse Group")) { browser.toggleTabGroup(group.id) }
                 Button("Colour…") { choosingColour = true }
                 // The whole group into another space, still a group there: Arc's
                 // folders came in wherever Arc had them.

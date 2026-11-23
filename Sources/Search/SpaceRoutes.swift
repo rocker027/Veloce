@@ -203,9 +203,9 @@ struct SpaceRouteList: View {
         let choices = SpaceRoutes.choices
         ForEach(prefs.spaceRoutes) { route in
             Rule()
-            Line(route.site, choices.first { $0.id == route.space }.map { "Opens in \($0.name)" }
-                 ?? "Its space is gone, so links open as usual") {
-                Pill("Remove") { SpaceRoutes.remove(route.site) }
+            Line(route.site, choices.first { $0.id == route.space }.map { String(localized: "Opens in \($0.name)") }
+                 ?? String(localized: "Its space is gone, so links open as usual")) {
+                Pill(String(localized: "Remove")) { SpaceRoutes.remove(route.site) }
             }
         }
         Rule()
@@ -224,7 +224,7 @@ struct SpaceRouteList: View {
             .labelsHidden()
             .pickerStyle(.menu)
             .fixedSize()
-            Pill("Add", action: add)
+            Pill(String(localized: "Add"), action: add)
                 .disabled(SpaceRoutes.site(typed) == nil)
                 .opacity(SpaceRoutes.site(typed) == nil ? 0.5 : 1)
         }

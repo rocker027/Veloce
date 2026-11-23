@@ -41,7 +41,9 @@ struct SearchApp: App {
         // shares, and a probe resized for a test once changed the size the
         // real window came back at. The other windows' frames are in
         // windows.json (see Windows.swift).
-        Window("Search", id: Browsers.sceneID) {
+        // The app's name, in every language: a literal here would be
+        // looked up, and "Search" reads 搜尋 in Chinese.
+        Window(Text(verbatim: "Search"), id: Browsers.sceneID) {
             SceneRoot(slot: SceneSlot.shared)
                 .frame(minWidth: 640, minHeight: 420)
         }
@@ -162,10 +164,10 @@ struct SearchApp: App {
                 // Folded away, not moved (see Fold.swift) — the column, or the
                 // strip across the top.
                 Button(browser.prefs.shrinks && !browser.folded
-                       ? (browser.prefs.sideIcons ? "Show Sidebar Titles" : "Show Sidebar as Icons Only")
+                       ? (browser.prefs.sideIcons ? String(localized: "Show Sidebar Titles") : String(localized: "Show Sidebar as Icons Only"))
                        : browser.prefs.sidebar
-                       ? (browser.folded ? "Show Sidebar" : "Hide Sidebar")
-                       : (browser.folded ? "Show Tab Bar" : "Hide Tab Bar")) { browser.toggleFold() }
+                       ? (browser.folded ? String(localized: "Show Sidebar") : String(localized: "Hide Sidebar"))
+                       : (browser.folded ? String(localized: "Show Tab Bar") : String(localized: "Hide Tab Bar"))) { browser.toggleFold() }
                     .shortcut("view.fold")
                 Picker("Tabs Wear", selection: Binding(
                     get: { browser.prefs.glyph },
@@ -195,7 +197,7 @@ struct SearchApp: App {
                 // (Settings › General).
                 if browser.prefs.sitesInPanel {
                     Menu("Side Panel") {
-                        Button(browser.sidePanelShown ? "Close Side Panel" : "Show Side Panel") { browser.toggleSitePanel() }
+                        Button(browser.sidePanelShown ? String(localized: "Close Side Panel") : String(localized: "Show Side Panel")) { browser.toggleSitePanel() }
                             .shortcut("view.sitePanel")
                         Divider()
                         ForEach(PanelSites.offered, id: \.name) { site in
@@ -267,7 +269,7 @@ struct SearchApp: App {
                 // above took with it: ⌃⌘F did nothing (#1176). The key is
                 // the Mac's, never offered in Settings › Shortcuts.
                 Divider()
-                Button(browser.fullScreen ? "Exit Full Screen" : "Enter Full Screen") {
+                Button(browser.fullScreen ? String(localized: "Exit Full Screen") : String(localized: "Enter Full Screen")) {
                     (NSApp.keyWindow ?? browser.window)?.toggleFullScreen(nil)
                 }
                 .keyboardShortcut("f", modifiers: [.control, .command])
@@ -290,7 +292,7 @@ struct SearchApp: App {
                 if browser.prefs.splitView {
                     // The same key puts a pair apart: on a pair, the item
                     // says so, and the one below it without a key goes.
-                    Button(browser.activeSplit == nil || browser.pickedSplit != nil ? "Split Current Page" : "Separate Split Tabs") {
+                    Button(browser.activeSplit == nil || browser.pickedSplit != nil ? String(localized: "Split Current Page") : String(localized: "Separate Split Tabs")) {
                         browser.splitKey()
                     }
                         .shortcut("tabs.split")
@@ -317,7 +319,7 @@ struct SearchApp: App {
                         .shortcut("tabs.separateSplit")
                         .disabled(browser.activeSplit == nil)
                     }
-                    Button((browser.activeSplit?.tabs.count ?? 2) > 2 ? "Close All Pages" : "Close Both Pages") { browser.closeSplit() }
+                    Button((browser.activeSplit?.tabs.count ?? 2) > 2 ? String(localized: "Close All Pages") : String(localized: "Close Both Pages")) { browser.closeSplit() }
                         .disabled(browser.activeSplit == nil)
                     Divider()
                 }
@@ -334,7 +336,7 @@ struct SearchApp: App {
                         }
                     } else {
                         if rows {
-                            Button(tab.listed ? "Show Pin as Square" : "Show Pin as Row") { browser.setListed(tab, !tab.listed) }
+                            Button(tab.listed ? String(localized: "Show Pin as Square") : String(localized: "Show Pin as Row")) { browser.setListed(tab, !tab.listed) }
                         }
                         if !(rows && tab.listed) {
                             Button("Change Letter") { browser.editLetter(tab) }
@@ -373,7 +375,7 @@ struct SearchApp: App {
                     .shortcut("tabs.mute")
             }
             CommandMenu("Bookmarks") {
-                Button(browser.pageKept ? "Edit Bookmark\u{2026}" : "Add This Page") { browser.bookmarkCurrent() }
+                Button(browser.pageKept ? String(localized: "Edit Bookmark…") : String(localized: "Add This Page")) { browser.bookmarkCurrent() }
                     .shortcut("bookmarks.add")
                     .disabled(!(browser.active?.isWeb ?? false))
                 Button("Show Bookmarks…") { browser.bookmarking = true }
@@ -851,7 +853,7 @@ struct ContentView: View {
             }
             StoreOffer(browser: browser)
             if browser.veiling {
-                hint("Click anything to hide it   ↑↓ wider, narrower   ⌘Z undo   esc done")
+                hint(String(localized: "Click anything to hide it   ↑↓ wider, narrower   ⌘Z undo   esc done"))
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
@@ -2146,7 +2148,7 @@ private struct UpdateMenuItem: View {
     var body: some View {
         switch updater.stage {
         case .none:
-            Button(updater.checking ? "Checking for Updates…" : "Check for Updates…") { updater.checkByHand() }
+            Button(updater.checking ? String(localized: "Checking for Updates…") : String(localized: "Check for Updates…")) { updater.checkByHand() }
                 .disabled(updater.checking)
         case .waiting:
             Button("Install Update") { updater.install() }
@@ -2156,7 +2158,7 @@ private struct UpdateMenuItem: View {
         case .ready:
             Button("Restart to Update") { updater.relaunch() }
         case .offered:
-            Button(updater.fetchingDisk ? "Downloading Update…" : "Download Update…") { updater.openDisk() }
+            Button(updater.fetchingDisk ? String(localized: "Downloading Update…") : String(localized: "Download Update…")) { updater.openDisk() }
                 .disabled(updater.fetchingDisk)
         }
     }
@@ -2232,7 +2234,7 @@ private struct ImportProgress: View {
             }
             Spacer(minLength: 0)
             Button { browser.cancelFileImport() } label: {
-                Text(job.cancelling ? "Cancelling…" : "Cancel")
+                Text(job.cancelling ? String(localized: "Cancelling…") : String(localized: "Cancel"))
                     .font(.system(size: 12))
                     .foregroundStyle(Palette.ink)
                     .padding(.horizontal, 10)

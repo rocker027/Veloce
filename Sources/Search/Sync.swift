@@ -166,8 +166,8 @@ final class Sync: ObservableObject {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.canCreateDirectories = true
-        panel.message = "Choose a folder your Macs share, in iCloud Drive or Dropbox for example. Turn on sync with the same folder in Search on each Mac."
-        panel.prompt = "Sync Here"
+        panel.message = String(localized: "Choose a folder your Macs share, in iCloud Drive or Dropbox for example. Turn on sync with the same folder in Search on each Mac.")
+        panel.prompt = String(localized: "Sync Here")
         let drive = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/Mobile Documents/com~apple~CloudDocs", isDirectory: true)
         if FileManager.default.fileExists(atPath: drive.path) { panel.directoryURL = drive }
@@ -256,7 +256,7 @@ final class Sync: ObservableObject {
         // is no reason to think everything was deleted: nothing happens.
         var isFolder: ObjCBool = false
         guard FileManager.default.fileExists(atPath: folder.path, isDirectory: &isFolder), isFolder.boolValue else {
-            problem = "The folder isn\u{2019}t there"
+            problem = String(localized: "The folder isn\u{2019}t there")
             return
         }
         running = true
@@ -284,7 +284,7 @@ final class Sync: ObservableObject {
         do {
             try files.createDirectory(at: folder, withIntermediateDirectories: true)
         } catch {
-            problem = "Search can\u{2019}t write in that folder"
+            problem = String(localized: "Search can\u{2019}t write in that folder")
             return []
         }
         problem = nil
@@ -315,7 +315,7 @@ final class Sync: ObservableObject {
                   let file = SyncMerge.decode(data, scope: scope), file.device != device
             else { continue }
             theirs.append(file.items)
-            names.append(file.name ?? "Another Mac")
+            names.append(file.name ?? String(localized: "Another Mac"))
         }
 
         // A Mac joining a folder other Macs already use takes what they
@@ -426,10 +426,10 @@ final class Sync: ObservableObject {
         let drive = NSHomeDirectory() + "/Library/Mobile Documents/com~apple~CloudDocs"
         if place.hasPrefix(drive) { place = "iCloud Drive" + place.dropFirst(drive.count) }
         place = place.replacingOccurrences(of: NSHomeDirectory(), with: "~")
-        if let problem { return "\(place): \(problem.lowercased())" }
+        if let problem { return String(localized: "\(place): \(problem.lowercased())") }
         guard let lastSynced else { return place }
         let when = RelativeDateTimeFormatter().localizedString(for: lastSynced, relativeTo: Date())
-        let with = others.isEmpty ? "no other Mac yet" : others.joined(separator: ", ")
-        return "\(place) · \(with) · \(when)"
+        let with = others.isEmpty ? String(localized: "no other Mac yet") : others.joined(separator: ", ")
+        return String(localized: "\(place) · \(with) · \(when)")
     }
 }

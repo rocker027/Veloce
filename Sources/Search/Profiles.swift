@@ -305,7 +305,7 @@ enum ProfileMenu {
             })
         }
         items.append(.separator())
-        items.append(item("New Profile…") { askNew() })
+        items.append(item(String(localized: "New Profile…")) { askNew() })
         return items
     }
 
@@ -318,10 +318,10 @@ enum ProfileMenu {
 
     /// Its name, then a window of its own.
     static func askNew() {
-        Ask.name("New Profile", detail: OneWindow.on
-                    ? "A separate set of spaces with its own sign-ins, history and bookmarks."
-                    : "A separate set of spaces with its own sign-ins, history and bookmarks, in a window of its own.",
-                 placeholder: "Work", confirm: "Create") { name in
+        Ask.name(String(localized: "New Profile"), detail: OneWindow.on
+                    ? String(localized: "A separate set of spaces with its own sign-ins, history and bookmarks.")
+                    : String(localized: "A separate set of spaces with its own sign-ins, history and bookmarks, in a window of its own."),
+                 placeholder: String(localized: "Work"), confirm: String(localized: "Create")) { name in
             let made = Profiles.shared.add(named: name)
             Browsers.open(profile: made.id)
         }
@@ -355,8 +355,8 @@ struct ProfilesSettings: View {
 
     var body: some View {
         Card {
-            Line("Profiles", "Separate sets of spaces, each with its own sign-ins, history and bookmarks, in windows of their own. Extensions, passwords and settings are shared.") {
-                Pill("New Profile…") { ProfileMenu.askNew() }
+            Line(String(localized: "Profiles"), String(localized: "Separate sets of spaces, each with its own sign-ins, history and bookmarks, in windows of their own. Extensions, passwords and settings are shared.")) {
+                Pill(String(localized: "New Profile…")) { ProfileMenu.askNew() }
             }
             if profiles.several {
                 ForEach(profiles.list) { profile in
@@ -373,19 +373,19 @@ struct ProfilesSettings: View {
         let spaces: [String]
 
         var body: some View {
-            Line(profile.name + (current ? " — this window" : ""), spaces.joined(separator: ", ")) {
+            Line(current ? String(localized: "\(profile.name) — this window") : profile.name, spaces.joined(separator: ", ")) {
                 HStack(spacing: 6) {
-                    if !current { Pill("Open") { Browsers.open(profile: profile.id) } }
-                    Pill("Rename…") {
-                        Ask.name("Rename Profile", placeholder: profile.name, initial: profile.name, confirm: "Rename") {
+                    if !current { Pill(String(localized: "Open")) { Browsers.open(profile: profile.id) } }
+                    Pill(String(localized: "Rename…")) {
+                        Ask.name(String(localized: "Rename Profile"), placeholder: profile.name, initial: profile.name, confirm: String(localized: "Rename")) {
                             Profiles.shared.rename(profile.id, to: $0)
                         }
                     }
                     if !profile.isPersonal {
-                        Pill("Delete…", tint: .red) {
-                            Ask.sure("Delete “\(profile.name)”?",
-                                     detail: "Its windows close, its spaces go with their tabs and pins, and its cookies, sign-ins, history and bookmarks are erased from this Mac.",
-                                     confirm: "Delete", returnCancels: true) {
+                        Pill(String(localized: "Delete…"), tint: .red) {
+                            Ask.sure(String(localized: "Delete “\(profile.name)”?"),
+                                     detail: String(localized: "Its windows close, its spaces go with their tabs and pins, and its cookies, sign-ins, history and bookmarks are erased from this Mac."),
+                                     confirm: String(localized: "Delete"), returnCancels: true) {
                                 Profiles.shared.delete(profile.id)
                             }
                         }

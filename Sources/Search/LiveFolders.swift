@@ -75,11 +75,11 @@ enum LiveFolders {
     /// folder made with its name and posts. Nothing is made for an address
     /// with no feed; it says so.
     static func ask(for browser: Browser, in parent: UUID?) {
-        Ask.name("New Live Folder",
-                 detail: "A feed’s address, or a site’s that has one. Its latest posts fill the folder, kept fresh every half hour.",
-                 placeholder: "https://example.com/feed.xml", confirm: "Add") { text in
+        Ask.name(String(localized: "New Live Folder"),
+                 detail: String(localized: "A feed’s address, or a site’s that has one. Its latest posts fill the folder, kept fresh every half hour."),
+                 placeholder: "https://example.com/feed.xml", confirm: String(localized: "Add")) { text in
             guard let url = Feed.address(text) else {
-                Ask.tell("That isn’t a web address", detail: "A feed’s address starts with https:// or http://.")
+                Ask.tell(String(localized: "That isn’t a web address"), detail: String(localized: "A feed’s address starts with https:// or http://."))
                 return
             }
             Task {
@@ -87,7 +87,7 @@ enum LiveFolders {
                 case .success(let read):
                     browser.newLiveFolder(read, in: parent)
                 case .failure(let problem):
-                    Ask.tell("No feed found", detail: problem.said(url))
+                    Ask.tell(String(localized: "No feed found"), detail: problem.said(url))
                 }
             }
         }
@@ -136,9 +136,9 @@ enum Feed {
 
         func said(_ url: URL) -> String {
             switch self {
-            case .network: "\(url.host() ?? url.absoluteString) couldn’t be reached."
-            case .tooBig: "What \(url.host() ?? url.absoluteString) sent is too large to be a feed."
-            case .notAFeed: "There’s no RSS or Atom feed at \(url.absoluteString), nor one that page points to."
+            case .network: String(localized: "\(url.host() ?? url.absoluteString) couldn’t be reached.")
+            case .tooBig: String(localized: "What \(url.host() ?? url.absoluteString) sent is too large to be a feed.")
+            case .notAFeed: String(localized: "There’s no RSS or Atom feed at \(url.absoluteString), nor one that page points to.")
             }
         }
     }
@@ -229,7 +229,7 @@ enum Feed {
         var seen = Set<URL>()
         let items = reader.items.filter { seen.insert($0.link).inserted }.prefix(LiveFolders.most)
         let title = clean(reader.title ?? "", html: false)
-        return Read(title: title.isEmpty ? (url.host() ?? "Live Folder") : title, feed: url, items: Array(items))
+        return Read(title: title.isEmpty ? (url.host() ?? String(localized: "Live Folder")) : title, feed: url, items: Array(items))
     }
 
     /// A page's own feed: the first `<link rel="alternate">` of an RSS or

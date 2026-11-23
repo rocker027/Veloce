@@ -149,7 +149,7 @@ extension Browser {
         guard let webView = tab.built else { return }
         let menu = NSMenu()
         menu.autoenablesItems = false
-        menu.addItem(ImageMenuItem("Open Image in New Tab") { [weak self] in
+        menu.addItem(ImageMenuItem(String(localized: "Open Image in New Tab")) { [weak self] in
             self?.open(url, foreground: true, from: tab)
         })
         // As a link's menu has it: the picture beside its page (idea 474).
@@ -162,14 +162,14 @@ extension Browser {
             })
         }
         menu.addItem(.separator())
-        menu.addItem(ImageMenuItem("Copy Image") { [weak self] in
+        menu.addItem(ImageMenuItem(String(localized: "Copy Image")) { [weak self] in
             self?.copyImage(at: url, in: tab)
         })
-        menu.addItem(ImageMenuItem("Download Image") { [weak self] in
+        menu.addItem(ImageMenuItem(String(localized: "Download Image")) { [weak self] in
             self?.downloadImage(at: url, from: webView)
         })
         menu.addItem(.separator())
-        menu.addItem(ImageMenuItem("Copy Image Address") {
+        menu.addItem(ImageMenuItem(String(localized: "Copy Image Address")) {
             NSPasteboard.general.clearContents()
             NSPasteboard.general.setString(url.absoluteString, forType: .string)
         })
@@ -188,12 +188,12 @@ extension Browser {
     func copyImage(at url: URL, in tab: Tab) {
         Task {
             guard let data = await imageData(at: url, in: tab), Browser.reasonable(data), let image = NSImage(data: data) else {
-                announce("Couldn't copy that image")
+                announce(String(localized: "Couldn't copy that image"))
                 return
             }
             NSPasteboard.general.clearContents()
             NSPasteboard.general.writeObjects([image])
-            announce("Image copied")
+            announce(String(localized: "Image copied"))
         }
     }
 

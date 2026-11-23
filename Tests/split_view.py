@@ -156,7 +156,9 @@ def launch(link=None):
     if os.path.exists(SOCK): os.remove(SOCK)
     before = running()
     handed = ["--env", f"SEARCH_LINK={link}"] if link else []
-    subprocess.run(["open", "-n", "-g", "-j", "--env", f"SEARCH_PROBE={W}", *handed, APP])
+    # In English whatever the Mac's language: the bench finds menus by their
+    # English titles, and tests read the words they expect (Localization/).
+    subprocess.run(["open", "-n", "-g", "-j", "--env", f"SEARCH_PROBE={W}", *handed, APP, "--args", "-AppleLanguages", "(en)"])
     for _ in range(150):
         if os.path.exists(SOCK): break
         time.sleep(0.1)

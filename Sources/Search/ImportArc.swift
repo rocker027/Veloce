@@ -121,7 +121,7 @@ enum Arc {
                 if data["list"] != nil {
                     let inside = nodes(under: childID, depth: depth + 1)
                     guard !inside.isEmpty else { return nil }
-                    return .folder(.init(title: named(item["title"] as? String) ?? "Folder", items: inside))
+                    return .folder(.init(title: named(item["title"] as? String) ?? String(localized: "Folder"), items: inside))
                 }
                 return nil
             }
@@ -131,7 +131,7 @@ enum Arc {
         for case let space as [String: Any] in (main["spaces"] as? [Any]) ?? [] {
             let profile = profileName(space["profile"])
             guard inProfile(profile) else { continue }
-            let name = named(space["title"] as? String) ?? "Space"
+            let name = named(space["title"] as? String) ?? String(localized: "Space")
             let iconType = (space["customInfo"] as? [String: Any])?["iconType"] as? [String: Any]
             let emoji = iconType?["emoji_v2"] as? String
             let arcIcon = iconType?["icon"] as? String

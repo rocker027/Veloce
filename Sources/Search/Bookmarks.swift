@@ -639,7 +639,7 @@ final class Bookmarks {
     /// A folder of your own, its name asked for as a rename's is: inside
     /// `parent`, or at the top level for nil. An empty name makes none.
     func askNewFolder(in parent: Bookmark.ID?, made: @escaping (Bookmark.ID) -> Void = { _ in }) {
-        Ask.name("New Folder", placeholder: "Folder name", confirm: "Make") { name in
+        Ask.name(String(localized: "New Folder"), placeholder: String(localized: "Folder name"), confirm: String(localized: "Make")) { name in
             made(self.insert(.folder(name, []), into: parent).id)
         }
     }
@@ -650,11 +650,11 @@ final class Bookmarks {
         guard node.isFolder, let kids = node.children, !kids.isEmpty else { return remove(node.id) }
         let count = Bookmarks.count(kids)
         let detail = switch count {
-        case 0: "The empty folders in it go too."
-        case 1: "The bookmark in it goes too."
-        default: "The \(count) bookmarks in it go too."
+        case 0: String(localized: "The empty folders in it go too.")
+        case 1: String(localized: "The bookmark in it goes too.")
+        default: String(localized: "The \(count) bookmarks in it go too.")
         }
-        Ask.sure("Remove \u{201C}\(node.title)\u{201D}?", detail: detail, confirm: "Remove") {
+        Ask.sure(String(localized: "Remove \u{201C}\(node.title)\u{201D}?"), detail: detail, confirm: String(localized: "Remove")) {
             self.remove(node.id)
         }
     }
@@ -666,12 +666,12 @@ final class Bookmarks {
     /// folder; a bookmark left without one is its icon alone on the bar.
     func askRename(_ node: Bookmark) {
         if node.isFolder {
-            Ask.name("Rename Folder", placeholder: node.title, initial: node.title, confirm: "Rename") {
+            Ask.name(String(localized: "Rename Folder"), placeholder: node.title, initial: node.title, confirm: String(localized: "Rename")) {
                 self.update(node.id, title: $0, url: nil)
             }
         } else {
-            Ask.name("Rename Bookmark", detail: "Without a name, the bookmarks bar shows its icon alone.",
-                     placeholder: node.label, initial: node.title, confirm: "Rename", empty: true) {
+            Ask.name(String(localized: "Rename Bookmark"), detail: String(localized: "Without a name, the bookmarks bar shows its icon alone."),
+                     placeholder: node.label, initial: node.title, confirm: String(localized: "Rename"), empty: true) {
                 self.update(node.id, title: $0, url: nil)
             }
         }
@@ -683,8 +683,8 @@ final class Bookmarks {
     /// line on why, and Cancel keeps the address the bookmark had.
     func askAddress(_ node: Bookmark, typed: String? = nil) {
         guard let current = node.url else { return }
-        let detail = typed.map { "Search can\u{2019}t open \u{201C}\($0)\u{201D} as a page. Cancel keeps the address the bookmark has." }
-        Ask.name("Edit Address", detail: detail, placeholder: "https://example.com", initial: typed ?? current, confirm: "Save") { typed in
+        let detail = typed.map { String(localized: "Search can\u{2019}t open \u{201C}\($0)\u{201D} as a page. Cancel keeps the address the bookmark has.") }
+        Ask.name(String(localized: "Edit Address"), detail: detail, placeholder: "https://example.com", initial: typed ?? current, confirm: String(localized: "Save")) { typed in
             guard let url = Address.url(from: typed) else {
                 DispatchQueue.main.async { self.askAddress(node, typed: typed) }
                 return
@@ -1152,7 +1152,7 @@ struct BookmarkDoor: View {
     }
 
     fileprivate static func door(_ browser: Browser, kept: Bool) -> some View {
-        Door(icon: kept ? "bookmark.fill" : "bookmark", help: "Bookmarks") { browser.toggleBookmarks() }
+        Door(icon: kept ? "bookmark.fill" : "bookmark", help: String(localized: "Bookmarks")) { browser.toggleBookmarks() }
     }
 
     /// Watches the tab for where it goes and the bookmarks for what is
@@ -1186,7 +1186,7 @@ struct BookmarkCard: View {
                 .foregroundStyle(Palette.ink)
 
             VStack(spacing: 8) {
-                line("Name") {
+                line(String(localized: "Name")) {
                     // Emptied, the field shows what the lists will read.
                     TextField(bookmarks.bookmark(id)?.url.flatMap(URL.init(string:)).map(Address.pretty) ?? "", text: $title)
                         .textFieldStyle(.plain)
@@ -1199,16 +1199,16 @@ struct BookmarkCard: View {
                         .background(Palette.wash, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .onChange(of: title) { _, typed in rename(typed) }
                 }
-                line("Folder") { folder }
+                line(String(localized: "Folder")) { folder }
             }
 
             HStack(spacing: 8) {
-                Quick("Remove", tint: .red.opacity(0.75)) {
+                Quick(String(localized: "Remove"), tint: .red.opacity(0.75)) {
                     close()
                     bookmarks.remove(id)
                 }
                 Spacer(minLength: 0)
-                Pill("Done", filled: true, action: close)
+                Pill(String(localized: "Done"), filled: true, action: close)
             }
         }
         .padding(14)
@@ -1238,7 +1238,7 @@ struct BookmarkCard: View {
             }
             Divider()
             Button("New Folder\u{2026}") {
-                Ask.name("New Folder", placeholder: "Name", confirm: "Create") { name in
+                Ask.name(String(localized: "New Folder"), placeholder: String(localized: "Name"), confirm: String(localized: "Create")) { name in
                     file(into: bookmarks.insert(.folder(name, []), into: nil).id)
                 }
             }
@@ -1247,7 +1247,7 @@ struct BookmarkCard: View {
                 Image(systemName: "folder")
                     .font(.system(size: 10.5))
                     .foregroundStyle(Palette.muted)
-                Text(here?.title ?? "Top Level")
+                Text(here?.title ?? String(localized: "Top Level"))
                     .font(.system(size: 12.5))
                     .foregroundStyle(Palette.ink)
                     .lineLimit(1)
@@ -1341,10 +1341,10 @@ struct BookmarksDropdown: View {
             }
             Divider().overlay(Palette.hairline)
             VStack(spacing: 1) {
-                Foot(browser.pageKept ? "bookmark.fill" : "bookmark", browser.pageKept ? "Edit This Bookmark\u{2026}" : "Add This Page") {
+                Foot(browser.pageKept ? "bookmark.fill" : "bookmark", browser.pageKept ? String(localized: "Edit This Bookmark\u{2026}") : String(localized: "Add This Page")) {
                     browser.bookmarkCurrent()
                 }
-                Foot(nil, "Manage Bookmarks…") { browser.bookmarking = true }
+                Foot(nil, String(localized: "Manage Bookmarks…")) { browser.bookmarking = true }
             }
             .padding(6)
         }
@@ -1431,13 +1431,13 @@ struct BookmarksPanel: View {
     @State private var shown: Bookmark.ID?
 
     var body: some View {
-        Plate("Bookmarks", width: 600, close: { browser.bookmarking = false }) {
+        Plate(String(localized: "Bookmarks"), width: 600, close: { browser.bookmarking = false }) {
             VStack(alignment: .leading, spacing: 14) {
-                Hunt(text: $query, prompt: "Search bookmarks", focus: $hunting)
+                Hunt(text: $query, prompt: String(localized: "Search bookmarks"), focus: $hunting)
                     .onSubmit(openFirst)
 
                 if bookmarks.isEmpty {
-                    Card { Nothing("Nothing kept yet. Add this page with ⇧⌘B, or bring yours in below.") }
+                    Card { Nothing(String(localized: "Nothing kept yet. Add this page with ⇧⌘B, or bring yours in below.")) }
                 } else if !query.isEmpty {
                     found
                 } else {
@@ -1473,11 +1473,11 @@ struct BookmarksPanel: View {
                 Text("Bring in from")
                     .font(.system(size: 12))
                     .foregroundStyle(Palette.muted)
-                Pill("Bring in…") { browser.lead(to: InternalPage(.importing)) }
-                Pill("File…") { browser.importFile() }
+                Pill(String(localized: "Bring in…")) { browser.lead(to: InternalPage(.importing)) }
+                Pill(String(localized: "File…")) { browser.importFile() }
                 Spacer()
-                Pill("New Folder…") { bookmarks.askNewFolder(in: nil) }
-                Text(bookmarks.count == 1 ? "1 bookmark" : "\(bookmarks.count) bookmarks")
+                Pill(String(localized: "New Folder…")) { bookmarks.askNewFolder(in: nil) }
+                Text(bookmarks.count == 1 ? String(localized: "1 bookmark") : String(localized: "\(bookmarks.count) bookmarks"))
                     .font(.system(size: 12))
                     .foregroundStyle(Palette.muted)
             }
@@ -1492,7 +1492,7 @@ struct BookmarksPanel: View {
     private var found: some View {
         let hits = bookmarks.matches(query)
         if hits.isEmpty {
-            Card { Nothing("Nothing matches.") }
+            Card { Nothing(String(localized: "Nothing matches.")) }
         } else {
             ScrollView(showsIndicators: false) {
                 Card {
@@ -1562,7 +1562,7 @@ struct BookmarksPanel: View {
                 }
                 Spacer(minLength: 8)
                 if hovering {
-                    Quick("Show in Folder", act: show)
+                    Quick(String(localized: "Show in Folder"), act: show)
                 }
             }
             .padding(.horizontal, 14)
@@ -1580,7 +1580,7 @@ struct BookmarksPanel: View {
 
         /// The folders it is in, then the site.
         private var whereabouts: String {
-            let folders = path.isEmpty ? "Top level" : path.joined(separator: " \u{203A} ")
+            let folders = path.isEmpty ? String(localized: "Top level") : path.joined(separator: " \u{203A} ")
             guard let host = node.host else { return folders }
             return folders + "  \u{00B7}  " + host
         }
@@ -1679,7 +1679,9 @@ final class BookmarkMenu: NSObject, NSMenuDelegate {
         if tracking, !menu.items.contains(where: { $0.tag == Self.mark }) { fill(menu) }
     }
 
-    private var menu: NSMenu? { NSApp.mainMenu?.items.first(where: { $0.title == "Bookmarks" })?.submenu }
+    // By its title as shown: CommandMenu("Bookmarks") in App.swift is
+    // translated the same way.
+    private var menu: NSMenu? { NSApp.mainMenu?.items.first(where: { $0.title == String(localized: "Bookmarks") })?.submenu }
 
     /// The window in front's: its profile's bookmarks (see Profiles.swift).
     private var shown: Browser? { Browsers.front.flatMap { !$0.isPopup ? $0 : nil } ?? browser }
@@ -1721,7 +1723,7 @@ final class BookmarkMenu: NSObject, NSMenuDelegate {
         let menu = NSMenu(title: folder.title)
         let made = items(for: folder.children ?? [])
         if made.isEmpty {
-            let empty = NSMenuItem(title: "Empty", action: nil, keyEquivalent: "")
+            let empty = NSMenuItem(title: String(localized: "Empty"), action: nil, keyEquivalent: "")
             empty.isEnabled = false
             menu.addItem(empty)
         }
@@ -1815,7 +1817,7 @@ final class BookmarkMenu: NSObject, NSMenuDelegate {
         menu.removeAllItems()
         let made = items(for: kids)
         if made.isEmpty {
-            let empty = NSMenuItem(title: "Empty", action: nil, keyEquivalent: "")
+            let empty = NSMenuItem(title: String(localized: "Empty"), action: nil, keyEquivalent: "")
             empty.isEnabled = false
             menu.addItem(empty)
         }
@@ -1831,7 +1833,7 @@ final class BookmarkMenu: NSObject, NSMenuDelegate {
         let line = NSMenuItem.separator()
         line.tag = Self.foot
         menu.addItem(line)
-        let item = NSMenuItem(title: "Open All in New Tabs", action: #selector(openAll(_:)), keyEquivalent: "")
+        let item = NSMenuItem(title: String(localized: "Open All in New Tabs"), action: #selector(openAll(_:)), keyEquivalent: "")
         item.target = self
         item.representedObject = urls
         item.tag = Self.foot

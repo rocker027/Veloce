@@ -40,7 +40,7 @@ def launch_with(link):
     """sv.launch, handed a link to launch with."""
     if os.path.exists(sv.SOCK): os.remove(sv.SOCK)
     before = sv.running()
-    subprocess.run(["open", "-n", "-g", "-j", "--env", f"SEARCH_PROBE={sv.W}", "--env", f"SEARCH_LINK={link}", sv.APP])
+    subprocess.run(["open", "-n", "-g", "-j", "--env", f"SEARCH_PROBE={sv.W}", "--env", f"SEARCH_LINK={link}", sv.APP, "--args", "-AppleLanguages", "(en)"])
     for _ in range(150):
         if os.path.exists(sv.SOCK): break
         time.sleep(0.1)

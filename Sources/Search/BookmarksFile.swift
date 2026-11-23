@@ -23,7 +23,7 @@ enum BookmarksFile {
         progress: (String, Int, Int?) -> Void = { _, _, _ in }
     ) throws -> [Bookmark]? {
         let data = try ImportFile.readData(url, control: control) { completed, total in
-            progress("Reading bookmark file", completed, total)
+            progress(String(localized: "Reading bookmark file"), completed, total)
         }
         try control.checkCancellation()
         guard let text = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1),
@@ -62,6 +62,8 @@ enum BookmarksFile {
 
         var parsedThrough = 0
         var failure: Error?
+        // Looked up once: the progress closure is called for every tag.
+        let parsing = String(localized: "Parsing bookmarks")
         tagExpression.enumerateMatches(in: text, options: [.reportProgress], range: NSRange(location: 0, length: ns.length)) { match, flags, stop in
             do {
                 try control.checkCancellation()
@@ -71,7 +73,7 @@ enum BookmarksFile {
                 return
             }
             guard let match else {
-                if flags.contains(.progress) { progress("Parsing bookmarks", parsedThrough, ns.length) }
+                if flags.contains(.progress) { progress(parsing, parsedThrough, ns.length) }
                 return
             }
             parsedThrough = max(parsedThrough, NSMaxRange(match.range))
@@ -98,7 +100,7 @@ enum BookmarksFile {
                 } else if bar, stack.count <= 1 {
                     stack.append((nil, []))
                 } else {
-                    stack.append((heading ?? "Folder", []))
+                    stack.append((heading ?? String(localized: "Folder"), []))
                 }
                 heading = nil
                 bar = false
@@ -106,11 +108,11 @@ enum BookmarksFile {
                 // </DL>
                 if let title = list.title { append(.folder(title, list.nodes)) } else if stack.isEmpty { root += list.nodes } else { stack[stack.count - 1].nodes += list.nodes }
             }
-            progress("Parsing bookmarks", parsedThrough, ns.length)
+            progress(parsing, parsedThrough, ns.length)
         }
         if let failure { throw failure }
         try control.checkCancellation()
-        progress("Parsing bookmarks", ns.length, ns.length)
+        progress(parsing, ns.length, ns.length)
         // A file cut short: what was open still counts.
         while let list = stack.popLast() {
             try control.checkCancellation()

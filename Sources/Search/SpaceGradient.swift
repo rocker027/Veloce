@@ -116,13 +116,36 @@ struct SpaceGradient: Codable, Equatable, Hashable {
 
     private static func swatch(_ name: String) -> String { swatches.first { $0.name == name }?.hex ?? "#808080" }
 
+    /// A swatch's name as drawn. The English one stays what `swatch` looks
+    /// a colour up by, so only what is shown is translated.
+    static func shown(_ name: String) -> String {
+        switch name {
+        case "Red": return String(localized: "Red")
+        case "Orange": return String(localized: "Orange")
+        case "Amber": return String(localized: "Amber")
+        case "Lime": return String(localized: "Lime")
+        case "Green": return String(localized: "Green")
+        case "Teal": return String(localized: "Teal")
+        case "Cyan": return String(localized: "Cyan")
+        case "Blue": return String(localized: "Blue")
+        case "Indigo": return String(localized: "Indigo")
+        case "Violet": return String(localized: "Violet")
+        case "Magenta": return String(localized: "Magenta")
+        case "Pink": return String(localized: "Pink")
+        case "Graphite": return String(localized: "Graphite")
+        case "Sand": return String(localized: "Sand")
+        case "None": return String(localized: "None")
+        default: return name
+        }
+    }
+
     static let presets: [(name: String, gradient: SpaceGradient)] = [
-        ("Sunrise", SpaceGradient(colours: [swatch("Amber"), swatch("Pink")])),
-        ("Lagoon", SpaceGradient(colours: [swatch("Teal"), swatch("Blue")])),
-        ("Orchard", SpaceGradient(colours: [swatch("Lime"), swatch("Teal")])),
-        ("Dusk", SpaceGradient(colours: [swatch("Indigo"), swatch("Magenta"), swatch("Orange")])),
-        ("Glacier", SpaceGradient(colours: [swatch("Cyan"), swatch("Indigo")])),
-        ("Ember", SpaceGradient(colours: [swatch("Red"), swatch("Amber")])),
+        (String(localized: "Sunrise"), SpaceGradient(colours: [swatch("Amber"), swatch("Pink")])),
+        (String(localized: "Lagoon"), SpaceGradient(colours: [swatch("Teal"), swatch("Blue")])),
+        (String(localized: "Orchard"), SpaceGradient(colours: [swatch("Lime"), swatch("Teal")])),
+        (String(localized: "Dusk"), SpaceGradient(colours: [swatch("Indigo"), swatch("Magenta"), swatch("Orange")])),
+        (String(localized: "Glacier"), SpaceGradient(colours: [swatch("Cyan"), swatch("Indigo")])),
+        (String(localized: "Ember"), SpaceGradient(colours: [swatch("Red"), swatch("Amber")])),
     ]
 
     /// A first gradient for a space: its colour, if it has one, into the
@@ -153,9 +176,9 @@ enum SpaceStrength: String, CaseIterable, Codable, Hashable {
 
     var name: String {
         switch self {
-        case .subtle: return "Subtle"
-        case .rich: return "Rich"
-        case .vivid: return "Vivid"
+        case .subtle: return String(localized: "Subtle")
+        case .rich: return String(localized: "Rich")
+        case .vivid: return String(localized: "Vivid")
         }
     }
 
@@ -443,10 +466,10 @@ extension Space {
     /// What the picker's preview says it is.
     var lookName: String {
         switch lookChoice {
-        case .none: return "No colour"
-        case .colour(let colour): return Spaces.colourNames[colour]
+        case .none: return String(localized: "No colour")
+        case .colour(let colour): return SpaceGradient.shown(Spaces.colourNames[colour])
         case .preset(let at): return SpaceGradient.presets[at].name
-        case .custom: return "Custom gradient"
+        case .custom: return String(localized: "Custom gradient")
         }
     }
 }
@@ -499,7 +522,7 @@ struct ColourSwatches: View {
     var body: some View {
         HStack(spacing: 10) {
             ForEach(Spaces.colours.indices, id: \.self) { index in
-                Self.swatch(selected: selected == index, name: Spaces.colourNames[index],
+                Self.swatch(selected: selected == index, name: SpaceGradient.shown(Spaces.colourNames[index]),
                             action: { choose(index) }) {
                     if index == 0 {
                         ZStack {
@@ -570,22 +593,22 @@ struct SpaceLookPicker: View {
     }
 
     static let directions: [(angle: Double, symbol: String, name: String)] = [
-        (0, "arrow.up", "Up"), (45, "arrow.up.right", "Up and right"), (90, "arrow.right", "Right"),
-        (135, "arrow.down.right", "Down and right"), (180, "arrow.down", "Down"), (225, "arrow.down.left", "Down and left"),
-        (270, "arrow.left", "Left"), (315, "arrow.up.left", "Up and left"),
+        (0, "arrow.up", String(localized: "Up")), (45, "arrow.up.right", String(localized: "Up and right")), (90, "arrow.right", String(localized: "Right")),
+        (135, "arrow.down.right", String(localized: "Down and right")), (180, "arrow.down", String(localized: "Down")), (225, "arrow.down.left", String(localized: "Down and left")),
+        (270, "arrow.left", String(localized: "Left")), (315, "arrow.up.left", String(localized: "Up and left")),
     ]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             preview
 
-            section("Colour") {
+            section(String(localized: "Colour")) {
                 ColourSwatches(selected: solidColour) { index in
                     browser.chooseLook(id, index == 0 ? .none : .colour(index))
                 }
             }
 
-            section("Gradient") {
+            section(String(localized: "Gradient")) {
                 HStack(spacing: 10) {
                     ForEach(SpaceGradient.presets.indices, id: \.self) { at in
                         let preset = SpaceGradient.presets[at]
@@ -598,16 +621,16 @@ struct SpaceLookPicker: View {
                 }
             }
 
-            section("Strength") { strengthControl }
+            section(String(localized: "Strength")) { strengthControl }
 
             // With the window as glass (Settings › Appearance › Window ›
             // Glass): how much of the colour lies over it, and its grain.
             // For every space alike, as the glass is the window's.
             if browser.prefs.glass {
-                section("Glass") {
+                section(String(localized: "Glass")) {
                     VStack(alignment: .leading, spacing: 10) {
-                        GlassSlider(name: "Transparency", value: Binding(get: { browser.prefs.glassClear }, set: { browser.prefs.glassClear = $0 }))
-                        GlassSlider(name: "Grain", value: Binding(get: { browser.prefs.glassGrain }, set: { browser.prefs.glassGrain = $0 }))
+                        GlassSlider(name: String(localized: "Transparency"), value: Binding(get: { browser.prefs.glassClear }, set: { browser.prefs.glassClear = $0 }))
+                        GlassSlider(name: String(localized: "Grain"), value: Binding(get: { browser.prefs.glassGrain }, set: { browser.prefs.glassGrain = $0 }))
                     }
                 }
             }
@@ -707,7 +730,7 @@ struct SpaceLookPicker: View {
         .background(RoundedRectangle(cornerRadius: 7, style: .continuous).fill(Palette.hover))
         .opacity(off ? 0.45 : 1)
         .disabled(off)
-        .help(off ? "Choose a colour or a gradient first" : "How strongly the space's colour shows")
+        .help(off ? String(localized: "Choose a colour or a gradient first") : String(localized: "How strongly the space's colour shows"))
     }
 
     private var custom: some View {
@@ -715,17 +738,17 @@ struct SpaceLookPicker: View {
         return VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 10) {
                 ForEach(gradient.colours.indices, id: \.self) { index in
-                    ColourSwatches.swatch(selected: well == index, name: "Colour \(index + 1)", action: { well = index }) {
+                    ColourSwatches.swatch(selected: well == index, name: String(localized: "Colour \(index + 1)"), action: { well = index }) {
                         Circle().fill(colour(gradient.colours[index]))
                     }
                 }
                 if gradient.colours.count < SpaceGradient.most {
-                    round("plus", "Add a Colour") {
+                    round("plus", String(localized: "Add a Colour")) {
                         browser.editGradient(id) { $0.colours.append($0.colours.last ?? SpaceGradient.swatches[0].hex) }
                         well = min(gradient.colours.count, SpaceGradient.most - 1)
                     }
                 } else {
-                    round("minus", "Remove the Last Colour") {
+                    round("minus", String(localized: "Remove the Last Colour")) {
                         browser.editGradient(id) { $0.colours.removeLast() }
                         well = min(well, gradient.colours.count - 2)
                     }
@@ -744,8 +767,8 @@ struct SpaceLookPicker: View {
                             }
                     }
                     .buttonStyle(.plain)
-                    .help(pick.name)
-                    .accessibilityLabel(pick.name)
+                    .help(SpaceGradient.shown(pick.name))
+                    .accessibilityLabel(SpaceGradient.shown(pick.name))
                 }
             }
             HStack(spacing: 0) {

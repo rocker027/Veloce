@@ -175,6 +175,20 @@ struct KeyCombo: Codable, Hashable {
 struct Command: Identifiable {
     enum Section: String, CaseIterable {
         case app = "Search", file = "File", edit = "Edit", view = "View", tabs = "Tabs", spaces = "Spaces", bookmarks = "Bookmarks", history = "History"
+
+        /// What a heading says; the raw value stays the English name.
+        var title: String {
+            switch self {
+            case .app: "Search"  // the app's name, in every language
+            case .file: String(localized: "File")
+            case .edit: String(localized: "Edit")
+            case .view: String(localized: "View")
+            case .tabs: String(localized: "Tabs")
+            case .spaces: String(localized: "Spaces")
+            case .bookmarks: String(localized: "Bookmarks")
+            case .history: String(localized: "History")
+            }
+        }
     }
 
     let id: String
@@ -206,140 +220,140 @@ struct Command: Identifiable {
 
     /// The same commands, keys and order as the menus (see App.swift).
     static let all: [Command] = [
-        Command("app.settings", "Settings…", .app, KeyCombo(",")) { $0.tuning = true },
-        Command("app.welcome", "Welcome…", .app, nil) { $0.welcoming = true },
-        Command("app.passwords", "Passwords…", .app, KeyCombo("l", option: true)) { $0.managing = true },
+        Command("app.settings", String(localized: "Settings…"), .app, KeyCombo(",")) { $0.tuning = true },
+        Command("app.welcome", String(localized: "Welcome…"), .app, nil) { $0.welcoming = true },
+        Command("app.passwords", String(localized: "Passwords…"), .app, KeyCombo("l", option: true)) { $0.managing = true },
 
-        Command("file.newWindow", "New Window", .file, KeyCombo("n")) { _ in Browsers.newWindow() },
-        Command("file.newTab", "New Tab", .file, KeyCombo("t")) { $0.launch() },
-        Command("file.newPrivateTab", "New Private Tab", .file, KeyCombo("n", shift: true)) { $0.newShyTab() },
-        Command("file.reopen", "Reopen Closed Tab", .file, KeyCombo("t", shift: true)) { $0.reopen() },
-        Command("file.openAddress", "Open Address…", .file, KeyCombo("l")) { $0.edit() },
-        Command("file.openFile", "Open File…", .file, KeyCombo("o")) { $0.openFile() },
-        Command("file.closeTab", "Close Tab", .file, KeyCombo("w")) { $0.closeFront() },
-        Command("file.closeWindow", "Close Window", .file, KeyCombo("w", shift: true)) { $0.closeWindow() },
-        Command("file.import", "Bring Things Over…", .file, nil) { $0.bringingIn = "" },
-        Command("file.share", "Share…", .file, nil) { $0.share() },
-        Command("file.savePage", "Save Page As…", .file, nil) { $0.savePage() },
-        Command("file.exportPDF", "Export as PDF…", .file, nil) { $0.exportPDF() },
-        Command("file.print", "Print…", .file, KeyCombo("p")) { $0.printPage() },
+        Command("file.newWindow", String(localized: "New Window"), .file, KeyCombo("n")) { _ in Browsers.newWindow() },
+        Command("file.newTab", String(localized: "New Tab"), .file, KeyCombo("t")) { $0.launch() },
+        Command("file.newPrivateTab", String(localized: "New Private Tab"), .file, KeyCombo("n", shift: true)) { $0.newShyTab() },
+        Command("file.reopen", String(localized: "Reopen Closed Tab"), .file, KeyCombo("t", shift: true)) { $0.reopen() },
+        Command("file.openAddress", String(localized: "Open Address…"), .file, KeyCombo("l")) { $0.edit() },
+        Command("file.openFile", String(localized: "Open File…"), .file, KeyCombo("o")) { $0.openFile() },
+        Command("file.closeTab", String(localized: "Close Tab"), .file, KeyCombo("w")) { $0.closeFront() },
+        Command("file.closeWindow", String(localized: "Close Window"), .file, KeyCombo("w", shift: true)) { $0.closeWindow() },
+        Command("file.import", String(localized: "Bring Things Over…"), .file, nil) { $0.bringingIn = "" },
+        Command("file.share", String(localized: "Share…"), .file, nil) { $0.share() },
+        Command("file.savePage", String(localized: "Save Page As…"), .file, nil) { $0.savePage() },
+        Command("file.exportPDF", String(localized: "Export as PDF…"), .file, nil) { $0.exportPDF() },
+        Command("file.print", String(localized: "Print…"), .file, KeyCombo("p")) { $0.printPage() },
         // A coding agent connected (AgentControl): Stop from the keyboard.
-        Command("file.stopAgent", "Stop Agent", .file, KeyCombo(".", option: true, control: true)) { _ in
+        Command("file.stopAgent", String(localized: "Stop Agent"), .file, KeyCombo(".", option: true, control: true)) { _ in
             AgentControl.shared.stopSession()
         },
 
-        Command("edit.pasteMatchStyle", "Paste and Match Style", .edit, KeyCombo("v", shift: true, option: true)) { _ in
+        Command("edit.pasteMatchStyle", String(localized: "Paste and Match Style"), .edit, KeyCombo("v", shift: true, option: true)) { _ in
             Browser.pasteMatchingStyle()
         },
-        Command("edit.find", "Find on Page…", .edit, KeyCombo("f")) { $0.openFind() },
-        Command("edit.findNext", "Find Next", .edit, KeyCombo("g")) { $0.look(forward: true) },
-        Command("edit.findPrevious", "Find Previous", .edit, KeyCombo("g", shift: true)) { $0.look(forward: false) },
-        Command("edit.copyCleanLink", "Copy Clean Link", .edit, KeyCombo("c", shift: true, option: true)) { $0.copyCleanLink() },
+        Command("edit.find", String(localized: "Find on Page…"), .edit, KeyCombo("f")) { $0.openFind() },
+        Command("edit.findNext", String(localized: "Find Next"), .edit, KeyCombo("g")) { $0.look(forward: true) },
+        Command("edit.findPrevious", String(localized: "Find Previous"), .edit, KeyCombo("g", shift: true)) { $0.look(forward: false) },
+        Command("edit.copyCleanLink", String(localized: "Copy Clean Link"), .edit, KeyCombo("c", shift: true, option: true)) { $0.copyCleanLink() },
 
-        Command("view.sidebar", "Show Tabs in Sidebar", .view, KeyCombo("s", shift: true)) { $0.toggleSidebar() },
-        Command("view.fold", "Hide Sidebar or Tab Bar", .view, KeyCombo("s")) { $0.toggleFold() },
+        Command("view.sidebar", String(localized: "Show Tabs in Sidebar"), .view, KeyCombo("s", shift: true)) { $0.toggleSidebar() },
+        Command("view.fold", String(localized: "Hide Sidebar or Tab Bar"), .view, KeyCombo("s")) { $0.toggleFold() },
         // Every tab group of the space at once, as Arc's folders (⌥⌘[ and ⌥⌘],
         // beside ⌘[ and ⌘], which go back and forward).
-        Command("view.foldGroups", "Fold All Groups", .view, KeyCombo("[", option: true)) { $0.foldAllGroups(true) },
-        Command("view.unfoldGroups", "Unfold All Groups", .view, KeyCombo("]", option: true)) { $0.foldAllGroups(false) },
-        Command("view.reload", "Reload Page", .view, KeyCombo("r")) { $0.reload() },
-        Command("view.reloadOrigin", "Reload Page From Origin", .view, KeyCombo("r", option: true)) { $0.reload(fromOrigin: true) },
-        Command("view.reader", "Reading Mode", .view, KeyCombo("r", shift: true)) { $0.toggleReader() },
-        Command("view.float", "Float Video", .view, KeyCombo("p", shift: true)) { $0.toggleFloat() },
-        Command("view.sitePanel", "Show Side Panel", .view, nil) { $0.toggleSitePanel() },
-        Command("view.dusk", "Darken This Site", .view, KeyCombo("d", shift: true)) { $0.toggleDusk() },
-        Command("view.duskPause", "Pause Darkening", .view, KeyCombo("d", shift: true, option: true)) { $0.pauseDusk() },
-        Command("view.summarize", "Summarize Page", .view, nil) { $0.summarizePage() },
-        Command("view.ask", "Ask About This Page…", .view, nil) { $0.askAboutPage() },
+        Command("view.foldGroups", String(localized: "Fold All Groups"), .view, KeyCombo("[", option: true)) { $0.foldAllGroups(true) },
+        Command("view.unfoldGroups", String(localized: "Unfold All Groups"), .view, KeyCombo("]", option: true)) { $0.foldAllGroups(false) },
+        Command("view.reload", String(localized: "Reload Page"), .view, KeyCombo("r")) { $0.reload() },
+        Command("view.reloadOrigin", String(localized: "Reload Page From Origin"), .view, KeyCombo("r", option: true)) { $0.reload(fromOrigin: true) },
+        Command("view.reader", String(localized: "Reading Mode"), .view, KeyCombo("r", shift: true)) { $0.toggleReader() },
+        Command("view.float", String(localized: "Float Video"), .view, KeyCombo("p", shift: true)) { $0.toggleFloat() },
+        Command("view.sitePanel", String(localized: "Show Side Panel"), .view, nil) { $0.toggleSitePanel() },
+        Command("view.dusk", String(localized: "Darken This Site"), .view, KeyCombo("d", shift: true)) { $0.toggleDusk() },
+        Command("view.duskPause", String(localized: "Pause Darkening"), .view, KeyCombo("d", shift: true, option: true)) { $0.pauseDusk() },
+        Command("view.summarize", String(localized: "Summarize Page"), .view, nil) { $0.summarizePage() },
+        Command("view.ask", String(localized: "Ask About This Page…"), .view, nil) { $0.askAboutPage() },
         // No key until you give one: Arc's ⇧⌘2 is a shifted digit, which
         // the menus read as a different character on many keyboards.
-        Command("view.capture", "Capture…", .view, nil) { $0.toggleSnap() },
-        Command("view.hide", "Hide Elements…", .view, KeyCombo("h", shift: true)) { $0.toggleHiding() },
-        Command("view.hidden", "Hidden on This Site…", .view, KeyCombo("u", shift: true)) { $0.reviewing.toggle() },
-        Command("view.style", "Edit Site Style…", .view, nil) { $0.editSiteStyle() },
-        Command("view.zoomIn", "Zoom In", .view, KeyCombo("+")) { $0.zoom(by: 1.1) },
-        Command("view.zoomOut", "Zoom Out", .view, KeyCombo("-")) { $0.zoom(by: 1 / 1.1) },
-        Command("view.actualSize", "Actual Size", .view, KeyCombo("0")) { $0.resetZoom() },
-        Command("view.inspector", "Web Inspector", .view, KeyCombo("i", option: true)) { $0.toggleInspector() },
-        Command("view.console", "JavaScript Console", .view, KeyCombo("j", option: true)) { $0.showConsole() },
-        Command("view.inspect", "Inspect Element", .view, KeyCombo("c", option: true)) { $0.inspectElement() },
+        Command("view.capture", String(localized: "Capture…"), .view, nil) { $0.toggleSnap() },
+        Command("view.hide", String(localized: "Hide Elements…"), .view, KeyCombo("h", shift: true)) { $0.toggleHiding() },
+        Command("view.hidden", String(localized: "Hidden on This Site…"), .view, KeyCombo("u", shift: true)) { $0.reviewing.toggle() },
+        Command("view.style", String(localized: "Edit Site Style…"), .view, nil) { $0.editSiteStyle() },
+        Command("view.zoomIn", String(localized: "Zoom In"), .view, KeyCombo("+")) { $0.zoom(by: 1.1) },
+        Command("view.zoomOut", String(localized: "Zoom Out"), .view, KeyCombo("-")) { $0.zoom(by: 1 / 1.1) },
+        Command("view.actualSize", String(localized: "Actual Size"), .view, KeyCombo("0")) { $0.resetZoom() },
+        Command("view.inspector", String(localized: "Web Inspector"), .view, KeyCombo("i", option: true)) { $0.toggleInspector() },
+        Command("view.console", String(localized: "JavaScript Console"), .view, KeyCombo("j", option: true)) { $0.showConsole() },
+        Command("view.inspect", String(localized: "Inspect Element"), .view, KeyCombo("c", option: true)) { $0.inspectElement() },
 
-        Command("tabs.back", "Back", .tabs, KeyCombo("[")) { $0.back() },
-        Command("tabs.forward", "Forward", .tabs, KeyCombo("]")) { $0.forward() },
-        Command("tabs.next", "Next Tab", .tabs, KeyCombo("]", shift: true)) { $0.step(1) },
+        Command("tabs.back", String(localized: "Back"), .tabs, KeyCombo("[")) { $0.back() },
+        Command("tabs.forward", String(localized: "Forward"), .tabs, KeyCombo("]")) { $0.forward() },
+        Command("tabs.next", String(localized: "Next Tab"), .tabs, KeyCombo("]", shift: true)) { $0.step(1) },
         // ⌃Tab's switcher, most recently used first, on a key of your own
         // (Arc lets you move it). Held, its ⌃, ⌥ or ⌘ keeps the switcher up;
         // with ⇧ too it walks back. No menu line: the key is read before the
         // menus (see ContentView.take and ShortcutStore.recentSwitch).
-        Command(Command.recentTabs, "Switch to Recent Tab", .tabs, KeyCombo("tab", command: false, control: true)) {
+        Command(Command.recentTabs, String(localized: "Switch to Recent Tab"), .tabs, KeyCombo("tab", command: false, control: true)) {
             $0.switchTabs(backwards: false)
         },
-        Command("tabs.previous", "Previous Tab", .tabs, KeyCombo("[", shift: true)) { $0.step(-1) },
-        Command("tabs.search", "Search Tabs…", .tabs, KeyCombo("k")) { browser in
+        Command("tabs.previous", String(localized: "Previous Tab"), .tabs, KeyCombo("[", shift: true)) { $0.step(-1) },
+        Command("tabs.search", String(localized: "Search Tabs…"), .tabs, KeyCombo("k")) { browser in
             browser.searchTabsKey()
         },
         // ⌥⌘N, Chrome's on the Mac: ⌃⌘S is the Mac's own Show Sidebar, and
         // sits beside ⌘S, which folds the tabs away.
-        Command("tabs.split", "Split Current Page", .tabs, KeyCombo("n", option: true)) { browser in
+        Command("tabs.split", String(localized: "Split Current Page"), .tabs, KeyCombo("n", option: true)) { browser in
             guard browser.prefs.splitView else { return }
             browser.splitKey()
         },
-        Command("tabs.focusLeftPane", "Focus Left Page", .tabs, KeyCombo("left", control: true)) { browser in
+        Command("tabs.focusLeftPane", String(localized: "Focus Left Page"), .tabs, KeyCombo("left", control: true)) { browser in
             guard browser.prefs.splitView else { return }
             browser.focusPane(onLeft: true)
         },
-        Command("tabs.focusRightPane", "Focus Right Page", .tabs, KeyCombo("right", control: true)) { browser in
+        Command("tabs.focusRightPane", String(localized: "Focus Right Page"), .tabs, KeyCombo("right", control: true)) { browser in
             guard browser.prefs.splitView else { return }
             browser.focusPane(onLeft: false)
         },
-        Command("tabs.focusOtherPane", "Focus Other Page", .tabs, nil) { browser in
+        Command("tabs.focusOtherPane", String(localized: "Focus Other Page"), .tabs, nil) { browser in
             guard browser.prefs.splitView else { return }
             browser.focusOtherPane()
         },
-        Command("tabs.swapSplit", "Swap Pages", .tabs, nil) { browser in
+        Command("tabs.swapSplit", String(localized: "Swap Pages"), .tabs, nil) { browser in
             guard browser.prefs.splitView else { return }
             browser.swapSplit()
         },
-        Command("tabs.separateSplit", "Separate Split Tabs", .tabs, nil) { browser in
+        Command("tabs.separateSplit", String(localized: "Separate Split Tabs"), .tabs, nil) { browser in
             guard browser.prefs.splitView, let tab = browser.active else { return }
             browser.detachSplit(tab)
         },
         // No key until you give one: either unpins a pinned tab, as ⌥⌘N
         // takes away the split it made. With the rows off every pin is a
         // square, and so is the row's.
-        Command("tabs.pin", "Pin Tab", .tabs, nil) { browser in
+        Command("tabs.pin", String(localized: "Pin Tab"), .tabs, nil) { browser in
             guard let tab = browser.active else { return }
             if tab.pin != nil { browser.unpin(tab) } else if tab.isWeb { browser.pin(tab) }
         },
-        Command("tabs.pinRow", "Pin Tab as Row", .tabs, nil) { browser in
+        Command("tabs.pinRow", String(localized: "Pin Tab as Row"), .tabs, nil) { browser in
             guard let tab = browser.active else { return }
             if tab.pin != nil { browser.unpin(tab) } else if tab.isWeb { browser.pin(tab, listed: browser.prefs.showsPinRows) }
         },
-        Command("tabs.rename", "Rename Tab", .tabs, nil) { browser in
+        Command("tabs.rename", String(localized: "Rename Tab"), .tabs, nil) { browser in
             if let tab = browser.active { browser.beginTabRename(tab) }
         },
-        Command("tabs.duplicate", "Duplicate Tab", .tabs, KeyCombo("d")) { $0.duplicate() },
-        Command("tabs.copyAddress", "Copy Address", .tabs, KeyCombo("c", shift: true)) { $0.copyAddress() },
-        Command("tabs.copyMarkdown", "Copy as Markdown Link", .tabs, nil) { $0.copyMarkdownLink() },
-        Command("tabs.pasteAndGo", "Paste and Go", .tabs, KeyCombo("v", shift: true)) { $0.pasteAndGo() },
-        Command("tabs.closeOthers", "Close Other Tabs", .tabs, nil) { browser in
+        Command("tabs.duplicate", String(localized: "Duplicate Tab"), .tabs, KeyCombo("d")) { $0.duplicate() },
+        Command("tabs.copyAddress", String(localized: "Copy Address"), .tabs, KeyCombo("c", shift: true)) { $0.copyAddress() },
+        Command("tabs.copyMarkdown", String(localized: "Copy as Markdown Link"), .tabs, nil) { $0.copyMarkdownLink() },
+        Command("tabs.pasteAndGo", String(localized: "Paste and Go"), .tabs, KeyCombo("v", shift: true)) { $0.pasteAndGo() },
+        Command("tabs.closeOthers", String(localized: "Close Other Tabs"), .tabs, nil) { browser in
             if let tab = browser.active { browser.closeOthers(but: tab) }
         },
-        Command("tabs.mute", "Stop Sound in Tab", .tabs, KeyCombo("m", shift: true)) { $0.pauseMedia() },
+        Command("tabs.mute", String(localized: "Stop Sound in Tab"), .tabs, KeyCombo("m", shift: true)) { $0.pauseMedia() },
 
-        Command("bookmarks.add", "Add This Page", .bookmarks, KeyCombo("b", shift: true)) { $0.bookmarkCurrent() },
-        Command("bookmarks.show", "Show Bookmarks…", .bookmarks, nil) { $0.bookmarking = true },
-        Command("bookmarks.bar", "Show Bookmarks Bar", .bookmarks, nil) { browser in
+        Command("bookmarks.add", String(localized: "Add This Page"), .bookmarks, KeyCombo("b", shift: true)) { $0.bookmarkCurrent() },
+        Command("bookmarks.show", String(localized: "Show Bookmarks…"), .bookmarks, nil) { $0.bookmarking = true },
+        Command("bookmarks.bar", String(localized: "Show Bookmarks Bar"), .bookmarks, nil) { browser in
             withAnimation(Motion.glide) { browser.prefs.bookmarksBar.toggle() }
         },
 
-        Command("history.show", "Show History…", .history, KeyCombo("y")) { $0.recalling = true },
-        Command("history.downloads", "Downloads…", .history, KeyCombo("j", shift: true)) { $0.showDownloads() },
-        Command("history.archive", "Archived Tabs…", .history, nil) { $0.archiving = true },
-        Command("history.clearData", "Clear Browsing Data…", .history, KeyCombo("delete", shift: true)) { $0.clearBrowsingData() },
-        Command("history.clear", "Clear History", .history, nil) { $0.clearHistory() },
+        Command("history.show", String(localized: "Show History…"), .history, KeyCombo("y")) { $0.recalling = true },
+        Command("history.downloads", String(localized: "Downloads…"), .history, KeyCombo("j", shift: true)) { $0.showDownloads() },
+        Command("history.archive", String(localized: "Archived Tabs…"), .history, nil) { $0.archiving = true },
+        Command("history.clearData", String(localized: "Clear Browsing Data…"), .history, KeyCombo("delete", shift: true)) { $0.clearBrowsingData() },
+        Command("history.clear", String(localized: "Clear History"), .history, nil) { $0.clearHistory() },
     ] + (1...9).map { number in
-        Command("spaces.\(number)", "Space \(number)", .spaces,
+        Command("spaces.\(number)", String(localized: "Space \(number)"), .spaces,
                 KeyCombo(String(number), command: false, control: true)) { browser in
             browser.switchSpace(index: number - 1)
         }

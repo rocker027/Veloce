@@ -309,7 +309,7 @@ struct SiteCard: View {
         if let host = url.host(), !host.isEmpty {
             return host.hasPrefix("www.") ? String(host.dropFirst(4)) : host
         }
-        if url.isFileURL { return "File" }
+        if url.isFileURL { return String(localized: "File") }
         return url.scheme ?? url.absoluteString
     }
 
@@ -323,13 +323,13 @@ struct SiteCard: View {
             if let safety {
                 Row(safety.title, submenu: true) { deeper = true }
             }
-            Row("Copy Address", keys: ShortcutStore.shared.key(for: "tabs.copyAddress")?.display ?? "") { after { browser.copyAddress() } }
+            Row(String(localized: "Copy Address"), keys: ShortcutStore.shared.key(for: "tabs.copyAddress")?.display ?? "") { after { browser.copyAddress() } }
             Separator()
-            Row("Print…", keys: ShortcutStore.shared.key(for: "file.print")?.display ?? "") { after { browser.printPage() } }
+            Row(String(localized: "Print…"), keys: ShortcutStore.shared.key(for: "file.print")?.display ?? "") { after { browser.printPage() } }
             zoom
             blocker
             if let url = tab.pageAddress, ["http", "https"].contains(url.scheme?.lowercased() ?? "") {
-                Row("Site Permissions", submenu: true) { showingPermissions = true }
+                Row(String(localized: "Site Permissions"), submenu: true) { showingPermissions = true }
             }
             sound
             grounded
@@ -348,7 +348,7 @@ struct SiteCard: View {
                 .padding(.leading, MenuMetrics.text)
                 .padding(.trailing, MenuMetrics.trailing)
                 .frame(height: MenuMetrics.row)
-                .help(tab.shy ? "Only in this private tab, until it closes. Uses more memory." : "Prevents sleep and automatic closure, even when memory is low. You can still close the tab.")
+                .help(tab.shy ? String(localized: "Only in this private tab, until it closes. Uses more memory.") : String(localized: "Prevents sleep and automatic closure, even when memory is low. You can still close the tab."))
             }
         }
     }
@@ -394,7 +394,7 @@ struct SiteCard: View {
                     }
                 }
                 Separator()
-                Row("Back") { showingPermissions = false }
+                Row(String(localized: "Back")) { showingPermissions = false }
             }
         }
     }
@@ -451,7 +451,7 @@ struct SiteCard: View {
                 .font(MenuMetrics.font)
                 .foregroundStyle(Color(nsColor: .labelColor))
             Spacer(minLength: 24)
-            Step(symbol: "minus", help: "Zoom Out", shortcut: "view.zoomOut") { browser.zoom(by: 1 / 1.1) }
+            Step(symbol: "minus", help: String(localized: "Zoom Out"), shortcut: "view.zoomOut") { browser.zoom(by: 1 / 1.1) }
             Button { browser.resetZoom() } label: {
                 Text("\(Int((tab.zoom * 100).rounded()))%")
                     .font(MenuMetrics.font)
@@ -461,8 +461,8 @@ struct SiteCard: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .shortcutHelp("Actual Size", "view.actualSize")
-            Step(symbol: "plus", help: "Zoom In", shortcut: "view.zoomIn") { browser.zoom(by: 1.1) }
+            .shortcutHelp(String(localized: "Actual Size"), "view.actualSize")
+            Step(symbol: "plus", help: String(localized: "Zoom In"), shortcut: "view.zoomIn") { browser.zoom(by: 1.1) }
         }
         .padding(.leading, MenuMetrics.text)
         .padding(.trailing, MenuMetrics.inset + 4)
@@ -612,11 +612,11 @@ struct SiteCard: View {
                 .padding(.bottom, 6)
             Separator()
             if let trust = safety.trust {
-                Row(certified == false ? "Show Certificate (Not Valid)…" : "Show Certificate…") {
+                Row(certified == false ? String(localized: "Show Certificate (Not Valid)…") : String(localized: "Show Certificate…")) {
                     after { SiteCard.show(trust) }
                 }
             }
-            Row("Back") { deeper = false }
+            Row(String(localized: "Back")) { deeper = false }
         }
     }
 
@@ -643,27 +643,27 @@ struct SiteCard: View {
             // (see Dialogs.trust) gets this far untrusted.
             if certified == false {
                 return Safety(
-                    symbol: "lock.open", title: "Connection is not secure",
-                    detail: "This site's certificate isn't trusted by this Mac. Someone could be reading what you send.",
+                    symbol: "lock.open", title: String(localized: "Connection is not secure"),
+                    detail: String(localized: "This site's certificate isn't trusted by this Mac. Someone could be reading what you send."),
                     tint: Palette.unsafe, trust: trust
                 )
             }
             if tab.built?.hasOnlySecureContent == false {
                 return Safety(
-                    symbol: "lock.trianglebadge.exclamationmark", title: "Parts of this page are not secure",
-                    detail: "The page came privately, but some of what it shows was fetched over plain http, where anyone on the network could read or change it.",
+                    symbol: "lock.trianglebadge.exclamationmark", title: String(localized: "Parts of this page are not secure"),
+                    detail: String(localized: "The page came privately, but some of what it shows was fetched over plain http, where anyone on the network could read or change it."),
                     tint: Palette.unsafe, trust: trust
                 )
             }
             return Safety(
-                symbol: "lock", title: "Connection is secure",
-                detail: "Your information (for example, passwords or credit card numbers) is private when it is sent to this site.",
+                symbol: "lock", title: String(localized: "Connection is secure"),
+                detail: String(localized: "Your information (for example, passwords or credit card numbers) is private when it is sent to this site."),
                 tint: Palette.safe, trust: trust
             )
         case "http":
             return Safety(
-                symbol: "lock.open", title: "Connection is not secure",
-                detail: "Don't enter passwords or credit card numbers here: anything sent to this site can be read on the way.",
+                symbol: "lock.open", title: String(localized: "Connection is not secure"),
+                detail: String(localized: "Don't enter passwords or credit card numbers here: anything sent to this site can be read on the way."),
                 tint: Palette.unsafe, trust: nil
             )
         default:

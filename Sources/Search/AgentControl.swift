@@ -403,8 +403,8 @@ final class AgentSession: ObservableObject, Identifiable {
 
     /// Why "Always allow" isn't offered, or nil when it is.
     var noAlways: String? {
-        guard AgentTrust.shared.usable else { return "this copy of Search has nowhere safe to keep it" }
-        guard let launcher else { return "Search couldn't tell which program started it" }
+        guard AgentTrust.shared.usable else { return String(localized: "this copy of Search has nowhere safe to keep it") }
+        guard let launcher else { return String(localized: "Search couldn't tell which program started it") }
         return launcher.unrememberable
     }
 
@@ -961,7 +961,7 @@ final class AgentControl: ObservableObject {
         // Folded away, icons only (no room for the line), or a page full screen.
         let bare = browser.folded || browser.prefs.iconColumn || browser.active.map { browser.fillsHere($0) } == true
         if bare {
-            browser.announce("\(session.client) was let in automatically — File › Stop Agent (⌃⌥⌘.) stops it")
+            browser.announce(String(localized: "\(session.client) was let in automatically — File › Stop Agent (⌃⌥⌘.) stops it"))
         }
     }
 

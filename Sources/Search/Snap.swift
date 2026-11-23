@@ -540,14 +540,14 @@ extension Browser {
         let web = tab.web
         let backing = web.window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2
         guard let plan = SnapGeometry.plan(choice, zoom: web.pageZoom, backing: backing) else {
-            announce("Nothing there to capture")
+            announce(String(localized: "Nothing there to capture"))
             finished?(["error": "nothing there"])
             return
         }
         let passing = tab.shy
         let file = file ?? Browser.free(SnapGeometry.fileName(Date()), in: downloadsFolder)
         let failed: (String?) -> Void = { [weak self] reason in
-            self?.announce("Couldn't capture this page")
+            self?.announce(String(localized: "Couldn't capture this page"))
             finished?(["error": reason ?? "no picture"])
         }
         let done: (NSImage, Bool) -> Void = { [weak self] image, cropped in
@@ -592,11 +592,14 @@ extension Browser {
             let wrote = (try? data.png.write(to: file, options: .atomic)) != nil
             DispatchQueue.main.async {
                 guard let self else { return }
-                let copied = cropped ? "The top of the page copied" : "Copied"
+                // Whole sentences, not "Copied" with a tail glued on: word order differs by language.
+                let folder = file.deletingLastPathComponent().lastPathComponent
                 if wrote {
-                    self.announce("\(copied) and saved to \(file.deletingLastPathComponent().lastPathComponent)", file: file)
+                    self.announce(cropped ? String(localized: "The top of the page copied and saved to \(folder)")
+                                          : String(localized: "Copied and saved to \(folder)"), file: file)
                 } else {
-                    self.announce("\(copied), but couldn't save it")
+                    self.announce(cropped ? String(localized: "The top of the page copied, but couldn't save it")
+                                          : String(localized: "Copied, but couldn't save it"))
                 }
                 let rep = NSBitmapImageRep(data: data.png)
                 finished?(["path": wrote ? file.path : "", "width": rep?.pixelsWide ?? 0,

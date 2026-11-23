@@ -153,8 +153,8 @@ struct SplitTabItem: View {
                 }
                 .padding(.trailing, 7)
                 .transition(.opacity)
-                .help(tab.id == pages.first?.id ? "Close the left page"
-                      : tab.id == pages.last?.id ? "Close the right page" : "Close this page")
+                .help(tab.id == pages.first?.id ? String(localized: "Close the left page")
+                      : tab.id == pages.last?.id ? String(localized: "Close the right page") : String(localized: "Close this page"))
         }
     }
 }
@@ -197,7 +197,7 @@ private struct SplitTabHalf: View {
     @State private var selectedOnPress = false
 
     private var hovering: Bool { hovered == tab.id }
-    private var title: String { tab.label.isEmpty ? "New Tab" : tab.label }
+    private var title: String { tab.label.isEmpty ? String(localized: "New Tab") : tab.label }
     private var playing: Bool { !tab.loading && (tab.noisy || tab.muted) }
     /// Never in a copy that takes no clicks (the map of every space's rows):
     /// a second field there takes the keys and ends the edit (see SideRow).
@@ -267,10 +267,10 @@ private struct SplitTabHalf: View {
         handled
             .accessibilityElement(children: editing ? .contain : .ignore)
             .accessibilityLabel(title)
-            .accessibilityValue(focused ? "Focused page" : "")
-            .accessibilityHint(interactive ? "Click to focus this page; right-click for tab actions" : "")
-            .accessibilityAction(named: "Focus page") { browser.focusPane(tab) }
-            .accessibilityAction(named: "Close tab") { if interactive { browser.closeTab(tab) } }
+            .accessibilityValue(focused ? String(localized: "Focused page") : "")
+            .accessibilityHint(interactive ? String(localized: "Click to focus this page; right-click for tab actions") : "")
+            .accessibilityAction(named: String(localized: "Focus page")) { browser.focusPane(tab) }
+            .accessibilityAction(named: String(localized: "Close tab")) { if interactive { browser.closeTab(tab) } }
             .help(title)
     }
 

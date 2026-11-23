@@ -195,7 +195,7 @@ struct StylePanel: View {
         let shown = CGSize(width: min(size.width, most.width), height: min(size.height, most.height))
         return Plate(host, width: shown.width, close: close) {
             VStack(alignment: .leading, spacing: 6) {
-                Caption("CSS for every page of this site")
+                Caption(String(localized: "CSS for every page of this site"))
                 TextEditor(text: $text)
                     .font(.system(size: 12, design: .monospaced))
                     .foregroundStyle(Palette.ink)
@@ -208,9 +208,9 @@ struct StylePanel: View {
             }
         } foot: {
             HStack(spacing: 8) {
-                Pill("Done", filled: true, action: close)
+                Pill(String(localized: "Done"), filled: true, action: close)
                 if !text.isEmpty {
-                    Pill("Clear") { text = "" }
+                    Pill(String(localized: "Clear")) { text = "" }
                 }
                 Spacer()
             }
@@ -285,7 +285,7 @@ struct SiteStylesControl: View {
     var body: some View {
         HStack(spacing: 10) {
             if !styles.hosts.isEmpty {
-                Menu(styles.hosts.count == 1 ? "1 site" : "\(styles.hosts.count) sites") {
+                Menu(styles.hosts.count == 1 ? String(localized: "1 site") : String(localized: "\(styles.hosts.count) sites")) {
                     ForEach(styles.hosts, id: \.self) { host in
                         Menu(host) {
                             Button("Remove Style") { styles.remove(on: host) }

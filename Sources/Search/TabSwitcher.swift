@@ -506,7 +506,8 @@ struct TabSwitcherOverlay: View {
     /// TabSwitcher.Action), under the grid; Open in Search only on a moon.
     private var legend: some View {
         let moon = switcher.selectedID.map(switcher.moons.contains) == true
-        let keys = [("W", "Close"), ("R", "Reload"), ("M", "Mute")] + (moon ? [("O", "Open in Search")] : [])
+        let keys = [("W", String(localized: "Close")), ("R", String(localized: "Reload")), ("M", String(localized: "Mute"))]
+            + (moon ? [("O", String(localized: "Open in Search"))] : [])
         return HStack(spacing: 14) {
             ForEach(keys, id: \.0) { key, name in
                 HStack(spacing: 4) {
@@ -634,7 +635,7 @@ struct TabSwitcherOverlay: View {
             Color.clear.preference(key: CardFrames.self, value: [tab.id: box.frame(in: .global)])
         })
         .accessibilityLabel("Switch to \(tab.label)")
-        .accessibilityValue(tab.id == switcher.selectedID ? "Selected" : "")
+        .accessibilityValue(tab.id == switcher.selectedID ? String(localized: "Selected") : "")
     }
 
     /// A small window's card: its page under a thin line, as the window
@@ -672,6 +673,6 @@ struct TabSwitcherOverlay: View {
             Color.clear.preference(key: CardFrames.self, value: [tab.id: box.frame(in: .global)])
         })
         .accessibilityLabel("Switch to the small window \(tab.label)")
-        .accessibilityValue(selected ? "Selected" : "")
+        .accessibilityValue(selected ? String(localized: "Selected") : "")
     }
 }

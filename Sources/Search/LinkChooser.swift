@@ -90,7 +90,7 @@ enum LinkChooser {
     // MARK: - copy
 
     static func title(sender: String?) -> String {
-        sender.map { "Open a link from \($0)" } ?? "Open a link"
+        sender.map { String(localized: "Open a link from \($0)") } ?? String(localized: "Open a link")
     }
 
     // MARK: - waiting links

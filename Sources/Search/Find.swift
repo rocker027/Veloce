@@ -66,10 +66,10 @@ struct FindBar: View {
 
             // A pane too narrow for them keeps Return and ⇧Return instead.
             if !narrow {
-                step("chevron.up", label: "Previous match", help: "Previous Match", shortcut: "edit.findPrevious") {
+                step("chevron.up", label: String(localized: "Previous match"), help: String(localized: "Previous Match"), shortcut: "edit.findPrevious") {
                     browser.look(forward: false)
                 }
-                step("chevron.down", label: "Next match", help: "Next Match", shortcut: "edit.findNext") {
+                step("chevron.down", label: String(localized: "Next match"), help: String(localized: "Next Match"), shortcut: "edit.findNext") {
                     browser.look(forward: true)
                 }
             }
@@ -94,7 +94,7 @@ struct FindBar: View {
             .accessibilityHint("Choose whether to match case or whole words.")
             .help("Search options")
 
-            step("xmark", label: "Close Find on Page", help: "Close the find field and clear its selection.") {
+            step("xmark", label: String(localized: "Close Find on Page"), help: String(localized: "Close the find field and clear its selection.")) {
                 browser.closeFind()
             }
         }

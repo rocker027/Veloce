@@ -166,9 +166,9 @@ final class Launcher: NSObject, ObservableObject, NSWindowDelegate {
     /// after this one was chosen — or this one taken by the button.
     private func say(_ status: OSStatus, for key: LauncherKey) {
         if HotKey.usedByMacOS(code: key.code, modifiers: HotKey.modifiers(of: key.combo)) {
-            refusal = "\(key.combo.display) is used by macOS"
+            refusal = String(localized: "\(key.combo.display) is used by macOS")
         } else {
-            refusal = status == noErr ? nil : "macOS won’t give Search \(key.combo.display)"
+            refusal = status == noErr ? nil : String(localized: "macOS won’t give Search \(key.combo.display)")
         }
     }
 
@@ -588,10 +588,10 @@ private struct LauncherField: NSViewRepresentable {
         field.cell?.wraps = false
         field.cell?.isScrollable = true
         field.placeholderAttributedString = NSAttributedString(
-            string: "Search or enter a web address",
+            string: String(localized: "Search or enter a web address"),
             attributes: [.font: Self.font, .foregroundColor: NSColor(Palette.ink.opacity(0.3))]
         )
-        field.setAccessibilityLabel("Address, opened in Search")
+        field.setAccessibilityLabel(String(localized: "Address, opened in Search"))
         return field
     }
 
@@ -728,7 +728,7 @@ struct LauncherKeyBox: View {
                     .lineLimit(1)
             }
             if prefs.launcherKey == nil, !listening {
-                Pill("Use \(LauncherKey.suggested.combo.display)") { prefs.launcherKey = .suggested }
+                Pill(String(localized: "Use \(LauncherKey.suggested.combo.display)")) { prefs.launcherKey = .suggested }
             }
             Button(action: listen) {
                 Text(label)
@@ -754,8 +754,8 @@ struct LauncherKeyBox: View {
 
     private var label: String {
         if let note { return note }
-        if listening { return "Type a shortcut" }
-        return prefs.launcherKey?.combo.display ?? "None"
+        if listening { return String(localized: "Type a shortcut") }
+        return prefs.launcherKey?.combo.display ?? String(localized: "None")
     }
 
     private func listen() {
@@ -779,10 +779,10 @@ struct LauncherKeyBox: View {
             return stop()
         }
         guard let combo = KeyCombo(event: event) else { return }
-        guard combo.isUsable else { return say("Add ⌘, ⌥ or ⌃") }
-        guard !KeyCombo.isReserved(combo) else { return say("Can’t be used") }
+        guard combo.isUsable else { return say(String(localized: "Add ⌘, ⌥ or ⌃")) }
+        guard !KeyCombo.isReserved(combo) else { return say(String(localized: "Can’t be used")) }
         guard !HotKey.usedByMacOS(code: event.keyCode, modifiers: HotKey.modifiers(of: combo)) else {
-            return say("Used by macOS")
+            return say(String(localized: "Used by macOS"))
         }
         prefs.launcherKey = LauncherKey(combo: combo, code: event.keyCode)
         stop()

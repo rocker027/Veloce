@@ -191,7 +191,7 @@ final class PageTranslator {
             report["collectMs"] = ms()
             let sample = String(first.prefix(400).map(\.plain).joined(separator: "\n").prefix(4000))
             guard let from = PageTranslator.detect(sample, hint: await hint) else {
-                throw Failure("Search couldn't tell which language this page is in")
+                throw Failure(String(localized: "Search couldn't tell which language this page is in"))
             }
             // A page call comes back even after end() cancelled the run, and
             // end() is the only way a translator loses its tab: from here a
@@ -213,7 +213,7 @@ final class PageTranslator {
             try Task.checkCancellation()
             report["fullMs"] = ms()
             if (report["applied"] as? Int ?? 0) == 0, PageTranslator.same(from, target) {
-                throw Failure("This page is already in \(PageTranslator.name(PageTranslator.code(target)))")
+                throw Failure(String(localized: "This page is already in \(PageTranslator.name(PageTranslator.code(target)))"))
             }
             tab.translation?.phase = .done
             finish()
@@ -493,7 +493,7 @@ final class PageTranslator {
             let tag = "[\(PageTranslator.code(from))→\(PageTranslator.code(target))] "
             return { strings in strings.map { tag + $0 } }
         }
-        guard #available(macOS 15, *) else { throw Failure("Translate Page needs macOS 15 or later") }
+        guard #available(macOS 15, *) else { throw Failure(String(localized: "Translate Page needs macOS 15 or later")) }
         // SDK 26.4 and later default to Apple Intelligence's higher-fidelity
         // model. Keep page translation responsive as it was with older SDKs,
         // while retaining the newer model for pairs the fast one cannot do.
@@ -519,7 +519,7 @@ final class PageTranslator {
         switch status {
         case .unsupported:
             if main {
-                throw Failure("\(PageTranslator.name(PageTranslator.code(from))) to \(PageTranslator.name(PageTranslator.code(target))) can't be translated on this Mac")
+                throw Failure(String(localized: "\(PageTranslator.name(PageTranslator.code(from))) to \(PageTranslator.name(PageTranslator.code(target))) can't be translated on this Mac"))
             }
             return nil
         case .installed:
@@ -538,7 +538,7 @@ final class PageTranslator {
             // To download: only for the page's own language, which you asked for.
             if !main { return nil }
         }
-        guard let content = web?.window?.contentView else { throw Failure("Translate Page needs the tab in a window") }
+        guard let content = web?.window?.contentView else { throw Failure(String(localized: "Translate Page needs the tab in a window")) }
         let lease = try await SessionLease.open(from: from, to: target, fast: fast, in: content)
         guard !Task.isCancelled else {
             lease.close()
@@ -561,18 +561,18 @@ final class PageTranslator {
 
     /// What went wrong, said quietly in the sign's menu.
     private static func describe(_ error: Error, from: Locale.Language?, to: Locale.Language) -> String {
-        let language = from.map { name(code($0)) } ?? "this page's language"
+        let language = from.map { name(code($0)) } ?? String(localized: "this page's language")
         if #available(macOS 15, *), let error = error as? TranslationError {
             switch error {
             case .unsupportedLanguagePairing, .unsupportedSourceLanguage, .unsupportedTargetLanguage:
-                return "\(language) to \(name(code(to))) can't be translated on this Mac"
+                return String(localized: "\(language) to \(name(code(to))) can't be translated on this Mac")
             case .unableToIdentifyLanguage:
-                return "Search couldn't tell which language this page is in"
+                return String(localized: "Search couldn't tell which language this page is in")
             default:
                 break
             }
         }
-        return "\(language) wasn't translated. The language may still need to be downloaded, in System Settings › General › Language & Region › Translation Languages"
+        return String(localized: "\(language) wasn't translated. The language may still need to be downloaded, in System Settings › General › Language & Region › Translation Languages")
     }
 
     struct Failure: LocalizedError {
@@ -1043,8 +1043,8 @@ struct TranslateMenu: View {
     static func heading(_ mark: TranslationMark) -> String {
         let from = mark.from.map(PageTranslator.name)
         switch mark.phase {
-        case .working: return from.map { "Translating from \($0)…" } ?? "Translating…"
-        case .done: return from.map { "Translated from \($0)" } ?? "Translated"
+        case .working: return from.map { String(localized: "Translating from \($0)…") } ?? String(localized: "Translating…")
+        case .done: return from.map { String(localized: "Translated from \($0)") } ?? String(localized: "Translated")
         case .failed(let message): return message
         }
     }
@@ -1061,17 +1061,17 @@ struct TranslateMenu: View {
                 .padding(.bottom, mark.failed ? 11 : 3)
             if !mark.failed {
                 VStack(spacing: 1) {
-                    Item(symbol: "arrow.uturn.backward", title: "Show Original") {
+                    Item(symbol: "arrow.uturn.backward", title: String(localized: "Show Original")) {
                         tab.translator?.end(restore: true)
                         done()
                     }
                     if let from = mark.from {
                         let on = tab.alwaysTranslates(from)
                         Item(symbol: on ? "checkmark" : "circle.dashed",
-                             title: tab.shy ? "Translate \(PageTranslator.name(from)) in This Tab" : "Always Translate \(PageTranslator.name(from))") {
+                             title: tab.shy ? String(localized: "Translate \(PageTranslator.name(from)) in This Tab") : String(localized: "Always Translate \(PageTranslator.name(from))")) {
                             tab.setAlwaysTranslates(from, !on)
                         }
-                        .help(tab.shy ? "Only until this private tab closes" : "Settings › Browsing › Pages lists the languages always translated")
+                        .help(tab.shy ? String(localized: "Only until this private tab closes") : String(localized: "Settings › Browsing › Pages lists the languages always translated"))
                     }
                 }
                 .padding(6)
@@ -1117,8 +1117,8 @@ struct TranslateLanguageList: View {
     var body: some View {
         ForEach(prefs.translateAlways.sorted(), id: \.self) { code in
             Rule()
-            Line("Always translate \(PageTranslator.name(code))", "Pages in \(PageTranslator.name(code)) are translated as they open") {
-                Pill("Remove") { prefs.translateAlways.remove(code) }
+            Line(String(localized: "Always translate \(PageTranslator.name(code))"), String(localized: "Pages in \(PageTranslator.name(code)) are translated as they open")) {
+                Pill(String(localized: "Remove")) { prefs.translateAlways.remove(code) }
             }
         }
     }

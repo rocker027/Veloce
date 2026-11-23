@@ -50,14 +50,14 @@ struct InternalPage: Equatable {
 
     var title: String {
         switch kind {
-        case .settings: return "Settings"
-        case .history: return "History"
-        case .downloads: return "Downloads"
-        case .bookmarks: return "Bookmarks"
-        case .passwords: return "Passwords"
-        case .archive: return "Archived Tabs"
-        case .importing: return "Bring Things Over"
-        case .notes: return "What's New"
+        case .settings: return String(localized: "Settings")
+        case .history: return String(localized: "History")
+        case .downloads: return String(localized: "Downloads")
+        case .bookmarks: return String(localized: "Bookmarks")
+        case .passwords: return String(localized: "Passwords")
+        case .archive: return String(localized: "Archived Tabs")
+        case .importing: return String(localized: "Bring Things Over")
+        case .notes: return String(localized: "What's New")
         }
     }
 
@@ -126,10 +126,12 @@ struct InternalPageView: View {
     var body: some View {
         content
             .environment(\.asTab, true)
-            // In English, as the words are: symbols the Mac draws per
-            // language (textformat.size) came out as 大小 for someone whose
-            // Mac is in Chinese (#1049). The region stays theirs.
-            .environment(\.locale, Locale(languageCode: .english, languageRegion: Locale.current.region))
+            // In the language the words are in: symbols the Mac draws per
+            // language (textformat.size) came out as 大小 beside English
+            // words for someone whose Mac is in Chinese (#1049). That is the
+            // app's own language (Wording), English on a Mac set to one it
+            // doesn't speak. The region stays theirs.
+            .environment(\.locale, Wording.locale)
             // Its own state for each kind: History's search box doesn't
             // follow you into Downloads.
             .id(page.kind)

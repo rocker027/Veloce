@@ -216,7 +216,7 @@ enum Zen {
                 case .item(let item): return .item(item)
                 case .folder(let id):
                     let inside = build(children[id] ?? [], depth: depth + 1)
-                    return inside.isEmpty ? nil : .folder(.init(title: Arc.named(names[id]) ?? "Folder", items: inside))
+                    return inside.isEmpty ? nil : .folder(.init(title: Arc.named(names[id]) ?? String(localized: "Folder"), items: inside))
                 }
             }
         }
@@ -248,7 +248,7 @@ enum Zen {
     /// A space with Zen's name, its icon — an emoji, or one of Zen's own
     /// pictures by its address — and its theme's colours.
     static func space(name: String?, icon: String?, theme: [String: Any]?) -> ArcSidebar.Space {
-        let name = Arc.named(name) ?? "Space"
+        let name = Arc.named(name) ?? String(localized: "Space")
         var emoji: String?
         var picture: String?
         if let icon = icon?.trimmingCharacters(in: .whitespacesAndNewlines), !icon.isEmpty {

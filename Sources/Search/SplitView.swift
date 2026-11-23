@@ -200,8 +200,8 @@ private struct PaneLayers: View {
         .animation(Motion.quick, value: hovered)
         .background { SplitDropZone(browser: browser, tab: tab, kind: .stage) }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel(tab.label.isEmpty ? "New Tab" : tab.label)
-        .accessibilityHint(paired && !focused ? "Click to focus this page" : "")
+        .accessibilityLabel(tab.label.isEmpty ? String(localized: "New Tab") : tab.label)
+        .accessibilityHint(paired && !focused ? String(localized: "Click to focus this page") : "")
         .accessibilityAction(named: "Focus page") {
             if paired { browser.focusPane(tab) }
         }
@@ -218,13 +218,13 @@ private struct SplitDropPreview: View {
 
     private var carried: String {
         let label = tabs.first { $0.id == preview.sourceID }?.label ?? ""
-        return label.isEmpty ? "New Tab" : label
+        return label.isEmpty ? String(localized: "New Tab") : label
     }
 
     /// Each page as it would stand, the carried one marked: of a page
     /// alone, the two halves there always were.
     private var places: [(id: String, title: String, proposed: Bool)] {
-        let label: (Tab.ID) -> String = { id in tabs.first { $0.id == id }?.label ?? "Page" }
+        let label: (Tab.ID) -> String = { id in tabs.first { $0.id == id }?.label ?? String(localized: "Page") }
         var row = (split?.tabs ?? [preview.targetID]).filter { $0 != preview.sourceID }
             .map { (id: $0.uuidString, title: label($0), proposed: false) }
         let at = row.firstIndex { $0.id == preview.targetID.uuidString }.map { preview.side == .left ? $0 : $0 + 1 } ?? row.count
@@ -249,7 +249,7 @@ private struct SplitDropPreview: View {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .strokeBorder(proposed ? Palette.ink.opacity(0.3) : Palette.ink.opacity(0.12), lineWidth: 1)
                 .padding(6)
-            Text(title.isEmpty ? "New Tab" : title)
+            Text(title.isEmpty ? String(localized: "New Tab") : title)
                 .font(.system(size: 13, weight: proposed ? .medium : .regular))
                 .foregroundStyle(Palette.ink.opacity(proposed ? 0.78 : 0.48))
                 .lineLimit(1)
@@ -335,7 +335,7 @@ private struct OpenTabRow: View {
         HStack(spacing: 8) {
             Mark(icon: tab.icon, letter: tab.monogram, size: 15)
                 .frame(width: 15, height: 15)
-            Text(tab.label.isEmpty ? "New Tab" : tab.label)
+            Text(tab.label.isEmpty ? String(localized: "New Tab") : tab.label)
                 .font(.system(size: 12.5))
                 .lineLimit(1)
                 .truncationMode(.tail)
@@ -381,7 +381,7 @@ private struct PaneQuestionCard: View {
                 .contentShape(Rectangle())
                 .onTapGesture { browser.focusPane(tab) }
             VStack(alignment: .leading, spacing: 10) {
-                Text(question.host.isEmpty ? "This page says" : question.host)
+                Text(question.host.isEmpty ? String(localized: "This page says") : question.host)
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(Palette.ink)
                     .lineLimit(1)
@@ -404,9 +404,9 @@ private struct PaneQuestionCard: View {
                 HStack(spacing: 8) {
                     Spacer(minLength: 0)
                     if question.kind != .alert {
-                        choice("Cancel", strong: false) { answer(false) }
+                        choice(String(localized: "Cancel"), strong: false) { answer(false) }
                     }
-                    choice("OK", strong: true) { answer(true) }
+                    choice(String(localized: "OK"), strong: true) { answer(true) }
                 }
                 .padding(.top, 2)
             }
@@ -424,7 +424,7 @@ private struct PaneQuestionCard: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + wait) { ready = true }
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("\(question.host.isEmpty ? "This page" : question.host) asks")
+        .accessibilityLabel("\(question.host.isEmpty ? String(localized: "This page") : question.host) asks")
     }
 
     private func answer(_ ok: Bool) {

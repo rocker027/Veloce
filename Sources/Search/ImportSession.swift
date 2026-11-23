@@ -235,7 +235,7 @@ enum SessionImport {
                 snapshot.groups[token] = Group(title: titled(found.title, for: nil), collapsed: found.collapsed)
             } else {
                 unnamed += 1
-                snapshot.groups[token] = Group(title: "Group \(unnamed)", collapsed: meta[token]?.collapsed ?? false)
+                snapshot.groups[token] = Group(title: String(localized: "Group \(unnamed)"), collapsed: meta[token]?.collapsed ?? false)
             }
         }
         snapshot.found = snapshot.tabs
@@ -246,7 +246,7 @@ enum SessionImport {
     static func titled(_ title: String, for url: URL?) -> String {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmed.isEmpty { return String(trimmed.prefix(300)) }
-        return url?.host() ?? url?.absoluteString ?? "Untitled"
+        return url?.host() ?? url?.absoluteString ?? String(localized: "Untitled")
     }
 
     /// Bytes a frame at a time, little-endian; a read past the end is nil,

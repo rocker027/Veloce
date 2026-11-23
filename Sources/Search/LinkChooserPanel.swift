@@ -368,7 +368,7 @@ private struct LinkChooserView: View {
                         .truncationMode(.middle)
                 }
             }
-            Text(chooser.alwaysShown ? "1–0 or Return opens · Space: Always · Esc cancels" : "1–0 or Return opens · Esc cancels")
+            Text(chooser.alwaysShown ? String(localized: "1–0 or Return opens · Space: Always · Esc cancels") : String(localized: "1–0 or Return opens · Esc cancels"))
                 .font(.system(size: 10.5))
                 .foregroundStyle(Palette.muted)
         }

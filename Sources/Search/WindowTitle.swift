@@ -13,9 +13,9 @@ struct WindowTitle: View {
     /// What the window is called for a page: the name you gave the tab, else
     /// the page's own, else the app's.
     static func name(page: String, private shy: Bool) -> String {
-        if shy { return "Private Tab" }
+        if shy { return String(localized: "Private Tab") }
         let trimmed = page.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? "Search" : trimmed
+        return trimmed.isEmpty ? "Search" : trimmed  // the app's name
     }
 
     var body: some View {

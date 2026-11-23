@@ -1,0 +1,11 @@
+/* The permission prompts macOS shows for Search, and the names Finder gives
+   what it opens. Keys are Info.plist's own (build.sh). */
+"NSCameraUsageDescription" = "你造訪的網站可以要求使用相機。每個網站第一次要求時，Search 都會詢問你並記住你的回答；「設定 › 隱私權」可以清除這些選擇。";
+"NSMicrophoneUsageDescription" = "你造訪的網站可以要求使用麥克風。每個網站第一次要求時，Search 都會詢問你並記住你的回答；「設定 › 隱私權」可以清除這些選擇。";
+"NSLocationUsageDescription" = "你造訪的網站可以要求取得你的位置。網站每次要求時 Search 都會詢問你，除非你對該網站選擇「永遠允許」；「設定 › 隱私權」可以清除這些選擇。";
+"NSLocationWhenInUseUsageDescription" = "你造訪的網站可以要求取得你的位置。網站每次要求時 Search 都會詢問你，除非你對該網站選擇「永遠允許」；「設定 › 隱私權」可以清除這些選擇。";
+"NSDownloadsFolderUsageDescription" = "你下載的檔案會儲存到「下載項目」檔案夾。";
+"NSContactsUsageDescription" = "你在欄位下方選取後，Search 會用「聯絡人」中你自己名片上的資料填寫表單。它不會讀取其他人的名片，也不會保留你名片的副本。";
+"Web page" = "網頁";
+"Web address" = "網址";
+"Email address" = "電子郵件地址";

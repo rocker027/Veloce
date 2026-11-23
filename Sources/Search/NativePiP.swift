@@ -18,8 +18,8 @@ enum FloatStyle: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .search: return "Search's window"
-        case .system: return "Picture in picture"
+        case .search: return String(localized: "Search's window")
+        case .system: return String(localized: "Picture in picture")
         }
     }
 }

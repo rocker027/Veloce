@@ -123,9 +123,9 @@ enum Look: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .light: return "Light"
-        case .dark: return "Dark"
-        case .system: return "System"
+        case .light: return String(localized: "Light")
+        case .dark: return String(localized: "Dark")
+        case .system: return String(localized: "System")
         }
     }
 

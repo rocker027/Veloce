@@ -18,8 +18,8 @@ enum Glyph: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .letters: return "Letters"
-        case .icons: return "Site icons"
+        case .letters: return String(localized: "Letters")
+        case .icons: return String(localized: "Site icons")
         }
     }
 }
@@ -30,9 +30,9 @@ enum PeekClick: String, CaseIterable {
 
     var title: String {
         switch self {
-        case .shift: return "Shift-click"
-        case .optionShift: return "Option-Shift-click"
-        case .optionCommand: return "Option-Command-click"
+        case .shift: return String(localized: "Shift-click")
+        case .optionShift: return String(localized: "Option-Shift-click")
+        case .optionCommand: return String(localized: "Option-Command-click")
         }
     }
 
@@ -56,11 +56,11 @@ enum TabLife: Int, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .never: return "Never"
-        case .halfDay: return "After 12 hours"
-        case .day: return "After a day"
-        case .week: return "After a week"
-        case .month: return "After a month"
+        case .never: return String(localized: "Never")
+        case .halfDay: return String(localized: "After 12 hours")
+        case .day: return String(localized: "After a day")
+        case .week: return String(localized: "After a week")
+        case .month: return String(localized: "After a month")
         }
     }
 }
@@ -80,9 +80,9 @@ enum DownloadsOpening: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .tab: return "In a tab"
-        case .popover: return "Floating by the button"
-        case .panel: return "In the side panel"
+        case .tab: return String(localized: "In a tab")
+        case .popover: return String(localized: "Floating by the button")
+        case .panel: return String(localized: "In the side panel")
         }
     }
 }
@@ -672,7 +672,8 @@ final class Preferences: ObservableObject {
     /// its title says where (#1210).
     var actualSizeTitle: String {
         let percent = Int((pageZoom * 100).rounded())
-        return percent == 100 ? "Actual Size" : "Actual Size (\(percent)%)"
+        let shown = "\(percent)%"
+        return percent == 100 ? String(localized: "Actual Size") : String(localized: "Actual Size (\(shown))")
     }
     /// The stops the setting steps through — every 5%, from as small as
     /// anyone reads to as big as a page is worth.

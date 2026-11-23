@@ -148,7 +148,7 @@ final class MeCard {
                 ? all["street-address"]?.replacingOccurrences(of: "\n", with: ", ") : all[kind]
             guard let title = shown, !title.isEmpty else { return nil }
             let rest = detail.compactMap { $0 }.filter { !$0.isEmpty && $0 != title }
-            return Offer(id: id, title: title, detail: rest.isEmpty ? "Your card" : rest.joined(separator: " · "), fields: all)
+            return Offer(id: id, title: title, detail: rest.isEmpty ? String(localized: "Your card") : rest.joined(separator: " · "), fields: all)
         }
 
         let email = emails.first?.value

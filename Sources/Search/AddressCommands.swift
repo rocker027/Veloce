@@ -34,8 +34,14 @@ enum AddressCommand: Equatable {
         .settings, .newTab, .newPrivateTab, .newSpace, .bookmarks, .history, .downloads, .passwords, .toggleSidebar,
     ]
 
-    /// What you'd type to reach it. The first is what the list shows.
+    /// What you'd type to reach it: the English words, whatever language
+    /// the app is in, and the name the list shows in that language.
     var aliases: [String] {
+        let shown = title.lowercased()
+        return words.contains(shown) ? words : words + [shown]
+    }
+
+    private var words: [String] {
         switch self {
         case .settings: return ["settings", "preferences"]
         case .newTab: return ["new tab"]
@@ -46,15 +52,23 @@ enum AddressCommand: Equatable {
         case .downloads: return ["downloads"]
         case .passwords: return ["passwords"]
         case .toggleSidebar: return ["toggle sidebar", "sidebar"]
-        case .menu(let id): return [Command.named(id)?.title ?? id]
-        case .page(let page): return ["\(page.title) Settings"]
+        case .menu, .page: return []
         }
     }
 
     var title: String {
         switch self {
-        case .menu, .page: return aliases[0]
-        default: return aliases[0].localizedCapitalized
+        case .settings: return String(localized: "Settings")
+        case .newTab: return String(localized: "New Tab")
+        case .newPrivateTab: return String(localized: "New Private Tab")
+        case .newSpace: return String(localized: "New Space")
+        case .bookmarks: return String(localized: "Bookmarks")
+        case .history: return String(localized: "History")
+        case .downloads: return String(localized: "Downloads")
+        case .passwords: return String(localized: "Passwords")
+        case .toggleSidebar: return String(localized: "Toggle Sidebar")
+        case .menu(let id): return Command.named(id)?.title ?? id
+        case .page(let page): return String(localized: "\(page.title) Settings")
         }
     }
 

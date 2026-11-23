@@ -126,6 +126,12 @@ mv "$APP/Contents/MacOS/$NAME.sdk" "$APP/Contents/MacOS/$NAME"
 # The AppleScript dictionary (Scripting.swift): read-only, tabs' addresses
 # and titles. The plist below points to it.
 cp Search.sdef "$APP/Contents/Resources/"
+# The words in other languages (Localization/README.md). English is the
+# source: every string in the code is its own key, so en.lproj stays empty and
+# only says the app speaks English, the language a Mac set to any other falls
+# back to. The plist below lists the same languages.
+mkdir -p "$APP/Contents/Resources/en.lproj"
+cp -R Localization/*.lproj "$APP/Contents/Resources/"
 
 # Symbols stay out of the app. The linker leaves every function's name and a
 # map back to the source in the binary — 15,000 entries, more than half of
@@ -184,6 +190,8 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>CFBundleDisplayName</key><string>$NAME</string>
   <key>CFBundleExecutable</key><string>$NAME</string>
   <key>CFBundleIdentifier</key><string>com.officecommun.search</string>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleLocalizations</key><array><string>en</string><string>zh-Hant</string></array>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>$VERSION</string>
   <key>CFBundleVersion</key><string>$BUILD</string>
@@ -291,9 +299,13 @@ PLIST
 # plain names above stay "Search", matching the folder, since a folder named
 # otherwise reads to macOS as renamed by hand, and then the folder wins.
 if [ "$DEV" = 1 ]; then
-  mkdir -p "$APP/Contents/Resources/en.lproj"
-  printf '"CFBundleDisplayName" = "%s";\n"CFBundleName" = "%s";\n' "$SHOWN" "$SHOWN" \
-    > "$APP/Contents/Resources/en.lproj/InfoPlist.strings"
+  # Every language's: a Mac in Traditional Chinese reads zh-Hant.lproj, and
+  # would find the plain name there. Appended, so the permission prompts
+  # translated in the same file stay.
+  for LPROJ in "$APP/Contents/Resources/"*.lproj; do
+    printf '"CFBundleDisplayName" = "%s";\n"CFBundleName" = "%s";\n' "$SHOWN" "$SHOWN" \
+      >> "$LPROJ/InfoPlist.strings"
+  done
   /usr/libexec/PlistBuddy -c "Add :LSHasLocalizedDisplayName bool true" "$APP/Contents/Info.plist"
 fi
 

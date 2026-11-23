@@ -34,32 +34,32 @@ struct ShortcutsPage: View {
         let words = hunt.trimmingCharacters(in: .whitespaces)
         guard !words.isEmpty else { return true }
         let key = words.replacingOccurrences(of: " ", with: "")
-        return "Tab 1 to 9".localizedCaseInsensitiveContains(words) || "numbers".localizedCaseInsensitiveContains(words)
+        return "Tab 1 to 9".localizedCaseInsensitiveContains(words) || String(localized: "Tab 1 to 9").localizedCaseInsensitiveContains(words) || "numbers".localizedCaseInsensitiveContains(words)
             || KeyCombo.tabNumbers.localizedCaseInsensitiveContains(key)
             || (1...9).contains { KeyCombo.tabNumber($0).display.localizedCaseInsensitiveContains(key) }
     }
 
     private var numbersNote: String {
         if prefs.usesSpaces && prefs.spacesOnCommand {
-            return "The ninth is the last. ⌘1–⌘9 switch spaces: Settings › Spaces & Pins"
+            return String(localized: "The ninth is the last. ⌘1–⌘9 switch spaces: Settings › Spaces & Pins")
         }
         return prefs.usesSpaces
-            ? "The ninth is the last. To switch spaces with them instead: Settings › Spaces & Pins"
-            : "The ninth is the last. With spaces on, they can switch spaces instead"
+            ? String(localized: "The ninth is the last. To switch spaces with them instead: Settings › Spaces & Pins")
+            : String(localized: "The ninth is the last. With spaces on, they can switch spaces instead")
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Hunt(text: $hunt, prompt: "Search commands or keys", focus: $hunting)
+            Hunt(text: $hunt, prompt: String(localized: "Search commands or keys"), focus: $hunting)
             let found = Command.all.filter(shown)
             let numbers = numbersShown
-            if found.isEmpty, !numbers { Nothing("No command called that, or on that key") }
+            if found.isEmpty, !numbers { Nothing(String(localized: "No command called that, or on that key")) }
             ForEach(Command.Section.allCases, id: \.self) { section in
                 let commands = found.filter { $0.section == section }
                 let numbered = section == .tabs && numbers
                 if !commands.isEmpty || numbered {
                 VStack(alignment: .leading, spacing: 6) {
-                    Caption(section.rawValue)
+                    Caption(section.title)
                     Card {
                         ForEach(Array(commands.enumerated()), id: \.element.id) { index, command in
                             if index > 0 { Rule() }
@@ -75,7 +75,7 @@ struct ShortcutsPage: View {
                         }
                         if numbered {
                             if !commands.isEmpty { Rule() }
-                            Line("Tab 1 to 9", numbersNote) {
+                            Line(String(localized: "Tab 1 to 9"), numbersNote) {
                                 FixedKey(text: KeyCombo.tabNumbers)
                             }
                         }
@@ -85,7 +85,7 @@ struct ShortcutsPage: View {
             }
             if #available(macOS 15.4, *) { extensionCommands }
             if store.anyChanged || prefs.peekClick != .shift, hunt.isEmpty {
-                Pill("Reset All to Defaults") {
+                Pill(String(localized: "Reset All to Defaults")) {
                     store.resetAll()
                     prefs.peekClick = .shift
                 }
@@ -107,7 +107,7 @@ extension ShortcutsPage {
         }
         if !commands.isEmpty {
             VStack(alignment: .leading, spacing: 6) {
-                Caption("Extensions")
+                Caption(String(localized: "Extensions"))
                 Card {
                     ForEach(Array(commands.enumerated()), id: \.element.id) { index, item in
                         if index > 0 { Rule() }
@@ -187,11 +187,11 @@ private struct KeyBox: View {
 
     private var label: String {
         if let taking, let other = store.owner(of: taking, except: id) {
-            return "Used by \(other.title) — press again"
+            return String(localized: "Used by \(other.title) — press again")
         }
         if let note { return note }
-        if listening { return "Type a shortcut" }
-        return store.key(for: id)?.display ?? "None"
+        if listening { return String(localized: "Type a shortcut") }
+        return store.key(for: id)?.display ?? String(localized: "None")
     }
 
     private func listen() {
@@ -214,20 +214,20 @@ private struct KeyBox: View {
             return stop()
         }
         guard let combo = KeyCombo(event: event) else { return }
-        guard combo.isUsable else { return say("Add ⌘, ⌥ or ⌃") }
+        guard combo.isUsable else { return say(String(localized: "Add ⌘, ⌥ or ⌃")) }
         // ⌘1–⌘9 (or ⌃1–⌃9) pick tabs: the whole set moves, with its switch.
         guard !combo.isTabNumber else {
-            return say(browser.prefs.usesSpaces ? "Picks a tab — see Spaces & Pins" : "Picks a tab")
+            return say(browser.prefs.usesSpaces ? String(localized: "Picks a tab — see Spaces & Pins") : String(localized: "Picks a tab"))
         }
-        guard !KeyCombo.isReserved(combo) else { return say("Can’t be changed") }
+        guard !KeyCombo.isReserved(combo) else { return say(String(localized: "Can’t be changed")) }
         // The switcher stays up while its key's ⌃, ⌥ or ⌘ is held, and
         // takes the tab picked when it is let go of: a key needs one.
         guard id != Command.recentTabs || combo.control || combo.option || combo.command
-        else { return say("Hold ⌃, ⌥ or ⌘ with it") }
+        else { return say(String(localized: "Hold ⌃, ⌥ or ⌘ with it")) }
         // An extension's command takes a key as its manifest would: one
         // that types a character, not an arrow or a function key.
-        guard !id.hasPrefix("ext:") || combo.key.count == 1 else { return say("Not for an extension") }
-        guard !id.hasPrefix("ext:") || !KeyCombo.isBrowserOnly(combo) else { return say("Not for an extension") }
+        guard !id.hasPrefix("ext:") || combo.key.count == 1 else { return say(String(localized: "Not for an extension")) }
+        guard !id.hasPrefix("ext:") || !KeyCombo.isBrowserOnly(combo) else { return say(String(localized: "Not for an extension")) }
         if store.owner(of: combo, except: id) != nil, taking != combo {
             taking = combo
             return
@@ -235,7 +235,7 @@ private struct KeyBox: View {
         let other = store.owner(of: combo, except: id)
         store.assign(combo, to: id)
         stop()
-        if let other { browser.announce("\(combo.display) moved from \(other.title)") }
+        if let other { browser.announce(String(localized: "\(combo.display) moved from \(other.title)")) }
     }
 
     /// Why that key won't do, for a moment, still listening.

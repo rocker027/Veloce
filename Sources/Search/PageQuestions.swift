@@ -32,15 +32,26 @@ struct CaptureQuestion: View {
                   : ask.wants == "cookies" ? "person.crop.circle" : "video")
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(Palette.muted)
-            Text(ask.wants == "location" ? "\(ask.host) wants to know your location"
-                 : ask.wants == "notifications" ? "\(ask.host) wants to send you notifications"
-                 // Safari's question, in fewer words: a yes lets the framed
-                 // site know you were on this one.
-                 : ask.wants == "cookies" ? "\(ask.host) wants to use its cookies and website data on \(ask.under), which also lets it see you were there"
-                 : "\(ask.host) wants to use your \(ask.wants)")
+            Text(line)
                 .font(.system(size: 12.5))
                 .foregroundStyle(Palette.ink)
                 .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    /// Whole sentences per kind, so each can be put into another language
+    /// as one; `wants` is the English word the browser asked with.
+    private var line: String {
+        switch ask.wants {
+        case "location": return String(localized: "\(ask.host) wants to know your location")
+        case "notifications": return String(localized: "\(ask.host) wants to send you notifications")
+        // Safari's question, in fewer words: a yes lets the framed
+        // site know you were on this one.
+        case "cookies": return String(localized: "\(ask.host) wants to use its cookies and website data on \(ask.under), which also lets it see you were there")
+        case "camera": return String(localized: "\(ask.host) wants to use your camera")
+        case "microphone": return String(localized: "\(ask.host) wants to use your microphone")
+        case "camera and microphone": return String(localized: "\(ask.host) wants to use your camera and microphone")
+        default: return String(localized: "\(ask.host) wants to use your \(ask.wants)")
         }
     }
 
@@ -51,7 +62,7 @@ struct CaptureQuestion: View {
     @ViewBuilder
     private var buttons: some View {
         Button { ask.once ? browser.allowCaptureOnce() : browser.allowCapture() } label: {
-            Text(ask.once ? "Allow once" : "Allow")
+            Text(ask.once ? String(localized: "Allow once") : String(localized: "Allow"))
                 .foregroundStyle(Palette.ground)
                 .padding(.horizontal, 11)
                 .padding(.vertical, 5)
@@ -80,8 +91,8 @@ struct ScreenQuestion: View {
                     .font(.system(size: 13))
                     .foregroundStyle(Palette.muted)
                     .padding(.top, 2)
-                Text(ask.sound ? "\(ask.host) wants to share your screen and your Mac's sound"
-                               : "\(ask.host) wants to share your screen")
+                Text(ask.sound ? String(localized: "\(ask.host) wants to share your screen and your Mac's sound")
+                               : String(localized: "\(ask.host) wants to share your screen"))
                     .font(.system(size: 12.5))
                     .foregroundStyle(Palette.ink)
                     .fixedSize(horizontal: false, vertical: true)
@@ -152,10 +163,10 @@ struct PasswordOffer: View {
     private var question: some View {
         let login = offer.login
         return Text(offer.changed
-             ? "Update the password for \(login.user) on \(login.host)?"
+             ? String(localized: "Update the password for \(login.user) on \(login.host)?")
              : (login.user.isEmpty
-                ? "Save this password for \(login.host)?"
-                : "Save the password for \(login.user) on \(login.host)?"))
+                ? String(localized: "Save this password for \(login.host)?")
+                : String(localized: "Save the password for \(login.user) on \(login.host)?")))
             .font(.system(size: 12.5))
             .foregroundStyle(Palette.ink)
             .fixedSize(horizontal: false, vertical: true)
@@ -165,7 +176,7 @@ struct PasswordOffer: View {
 
     @ViewBuilder
     private var buttons: some View {
-        Button(offer.changed ? "Update" : "Save") { browser.keepOffer() }
+        Button(offer.changed ? String(localized: "Update") : String(localized: "Save")) { browser.keepOffer() }
             .foregroundStyle(Palette.ground)
             .padding(.horizontal, 11)
             .padding(.vertical, 5)

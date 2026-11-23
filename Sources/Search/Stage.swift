@@ -96,7 +96,7 @@ struct Page: View {
             }
 
             if let failure = tab.failure {
-                Trouble(message: failure) { tab.reload() }
+                Trouble(message: Wording.shown(failure)) { tab.reload() }
                     .transition(.opacity)
             }
 

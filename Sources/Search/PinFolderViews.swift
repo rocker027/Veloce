@@ -48,7 +48,7 @@ struct PinFolderHeading: View {
         .onHover { hovering = interactive && $0 }
         .contextMenu { if interactive { menu } }
         .accessibilityLabel(folder.name)
-        .accessibilityHint(folder.collapsed ? "Folded folder" : "Folder")
+        .accessibilityHint(folder.collapsed ? String(localized: "Folded folder") : String(localized: "Folder"))
     }
 
     private var short: some View {
@@ -62,7 +62,7 @@ struct PinFolderHeading: View {
         .foregroundStyle(titleColour(hovering: hovering))
         .frame(maxWidth: .infinity)
         .frame(height: GroupHeading.compactHeight)
-        .help(folder.collapsed ? "\(folder.name) — folded" : (tip.isEmpty ? folder.name : "\(folder.name) — \(tip)"))
+        .help(folder.collapsed ? String(localized: "\(folder.name) — folded") : (tip.isEmpty ? folder.name : String(localized: "\(folder.name) — \(tip)")))
         .popover(isPresented: Binding(get: { editing }, set: { if !$0 { browser.editingPinFolder = nil } }),
                  hangingFrom: browser.prefs.sidePosition == .right ? .leading : .trailing) {
             field
@@ -133,7 +133,7 @@ struct PinFolderHeading: View {
     /// A live folder's feed, or that its last fetch failed: nothing louder.
     private var tip: String {
         guard let feed = folder.feed else { return "" }
-        if LiveFolders.failed.contains(folder.id) { return "Couldn’t refresh" }
+        if LiveFolders.failed.contains(folder.id) { return String(localized: "Couldn’t refresh") }
         return feed.host() ?? feed.absoluteString
     }
 
@@ -155,7 +155,7 @@ struct PinFolderHeading: View {
     private var menu: some View {
         let folders = browser.pinFolders
         Button("Rename Folder") { browser.editingPinFolder = folder.id }
-        Button(folder.collapsed ? "Expand Folder" : "Collapse Folder") { browser.togglePinFolder(folder.id) }
+        Button(folder.collapsed ? String(localized: "Expand Folder") : String(localized: "Collapse Folder")) { browser.togglePinFolder(folder.id) }
         if folder.isLive {
             Button("Refresh") { LiveFolders.refresh(folder.id, in: browser.spaceID) }
         } else {

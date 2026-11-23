@@ -24,9 +24,9 @@ struct SiteAccess: Equatable {
         var id: String { rawValue }
         var title: String {
             switch self {
-            case .all: return "All sites"
-            case .some: return "Some sites"
-            case .click: return "On click"
+            case .all: return String(localized: "All sites")
+            case .some: return String(localized: "Some sites")
+            case .click: return String(localized: "On click")
             }
         }
     }

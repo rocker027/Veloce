@@ -20,8 +20,8 @@ struct ApplePasswordsCard: View {
                 }
             } else {
                 Card {
-                    Line("Passwords from Apple's Passwords app",
-                         "Accounts and verification codes saved in the Passwords app, under their box. Unofficial: Search talks to the helper Apple made for its Chrome extension, as that extension. Never in private tabs.") {
+                    Line(String(localized: "Passwords from Apple's Passwords app"),
+                         String(localized: "Accounts and verification codes saved in the Passwords app, under their box. Unofficial: Search talks to the helper Apple made for its Chrome extension, as that extension. Never in private tabs.")) {
                         Switch(on: $prefs.applePasswords)
                     }
                     if prefs.applePasswords {
@@ -43,16 +43,16 @@ struct ApplePasswordsCard: View {
             // One row for both, its button kept and only greyed while
             // starting: a start that fails at once leaves it as it was (idea 781).
             if apple.refused {
-                Line(apple.trouble ?? "Not connected", "macOS stops Apple's helper the moment Search starts it. The iCloud Passwords extension needs that helper too.") { EmptyView() }
+                Line(apple.trouble ?? String(localized: "Not connected"), String(localized: "macOS stops Apple's helper the moment Search starts it. The iCloud Passwords extension needs that helper too.")) { EmptyView() }
             } else {
                 Line(ApplePasswords.title(state: apple.state, trouble: apple.trouble, connecting: apple.connecting),
-                     "Your Mac shows a code, and you type it here. Once per launch of Search, and only when you first want an account: under a sign-in box, Connect Apple Passwords… asks for it there.") {
-                    Pill("Connect…") { Task { await apple.connect() } }
+                     String(localized: "Your Mac shows a code, and you type it here. Once per launch of Search, and only when you first want an account: under a sign-in box, Connect Apple Passwords… asks for it there.")) {
+                    Pill(String(localized: "Connect…")) { Task { await apple.connect() } }
                         .disabled(apple.state == .starting)
                 }
             }
         case .code, .checking:
-            Line("Enter the code your Mac shows", apple.state == .checking ? "Checking…" : "Six digits, from the Passwords window") {
+            Line(String(localized: "Enter the code your Mac shows"), apple.state == .checking ? String(localized: "Checking…") : String(localized: "Six digits, from the Passwords window")) {
                 HStack(spacing: 8) {
                     TextField("000000", text: $code)
                         .textFieldStyle(.plain)
@@ -70,13 +70,13 @@ struct ApplePasswordsCard: View {
                         }
                         .onSubmit(send)
                         .disabled(apple.state == .checking)
-                    Pill("OK", filled: true, action: send)
-                    Pill("Cancel") { apple.disconnect() }
+                    Pill(String(localized: "OK"), filled: true, action: send)
+                    Pill(String(localized: "Cancel")) { apple.disconnect() }
                 }
             }
         case .paired:
-            Line("Connected", "Until Search quits. Accounts show under sign-in boxes, marked Apple Passwords; macOS may ask for Touch ID before one is filled.") {
-                Pill("Disconnect") { apple.disconnect() }
+            Line(String(localized: "Connected"), String(localized: "Until Search quits. Accounts show under sign-in boxes, marked Apple Passwords; macOS may ask for Touch ID before one is filled.")) {
+                Pill(String(localized: "Disconnect")) { apple.disconnect() }
             }
         }
     }
@@ -138,11 +138,11 @@ struct ApplePairingCard: View {
                         }
                         .onSubmit(send)
                 } else if !apple.refused, apple.state == .idle || apple.state == .starting {
-                    Pill("Try again", filled: true) { Task { await apple.connect() } }
+                    Pill(String(localized: "Try again"), filled: true) { Task { await apple.connect() } }
                         .disabled(apple.state == .starting)
                 }
                 Spacer(minLength: 0)
-                Pill("Cancel") { browser.endApplePairing(paired: false) }
+                Pill(String(localized: "Cancel")) { browser.endApplePairing(paired: false) }
             }
         }
         .padding(10)
@@ -164,19 +164,19 @@ struct ApplePairingCard: View {
 
     private var title: String {
         switch apple.state {
-        case .idle: return apple.trouble ?? "Not connected"
-        case .starting: return apple.connecting ? "Connecting to Apple Passwords…" : apple.trouble ?? "Connecting to Apple Passwords…"
-        case .code: return "Enter the code your Mac shows"
-        case .checking: return "Checking…"
-        case .paired: return "Connected"
+        case .idle: return apple.trouble ?? String(localized: "Not connected")
+        case .starting: return apple.connecting ? String(localized: "Connecting to Apple Passwords…") : apple.trouble ?? String(localized: "Connecting to Apple Passwords…")
+        case .code: return String(localized: "Enter the code your Mac shows")
+        case .checking: return String(localized: "Checking…")
+        case .paired: return String(localized: "Connected")
         }
     }
 
     private var detail: String {
         switch apple.state {
-        case .starting: return "Your Mac shows a six-digit code in a moment"
-        case .code, .checking: return "Six digits, from the Passwords window. Once per launch of Search."
-        default: return "Apple Passwords"
+        case .starting: return String(localized: "Your Mac shows a six-digit code in a moment")
+        case .code, .checking: return String(localized: "Six digits, from the Passwords window. Once per launch of Search.")
+        default: return String(localized: "Apple Passwords")
         }
     }
 

@@ -93,7 +93,7 @@ extension Browser {
     /// holding it. Its name arrives selected, as a new group's does, unless
     /// `rename` is false. Nil when no folder may be made there.
     @discardableResult
-    func newPinFolder(named name: String = "New Folder", in parent: UUID? = nil, holding tab: Tab? = nil,
+    func newPinFolder(named name: String = String(localized: "New Folder"), in parent: UUID? = nil, holding tab: Tab? = nil,
                       rename: Bool = true) -> UUID? {
         var folders = pinFolders
         if let tab, !takesFolder(tab) { return nil }
@@ -108,7 +108,7 @@ extension Browser {
         }
         guard PinTree.canMake(in: parent, in: folders) else { return nil }
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        let made = PinFolder(id: UUID(), name: trimmed.isEmpty ? "New Folder" : trimmed, parent: parent)
+        let made = PinFolder(id: UUID(), name: trimmed.isEmpty ? String(localized: "New Folder") : trimmed, parent: parent)
         folders.append(made)
         savePinFolders(folders)
         if let tab {

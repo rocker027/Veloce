@@ -49,7 +49,7 @@ struct Space: Codable, Identifiable, Equatable {
     /// The first space: the session and the store there were before spaces.
     static let firstID = UUID(uuidString: "00000000-0000-0000-0000-000000000001") ?? UUID()
     var isFirst: Bool { id == Space.firstID }
-    static func first() -> Space { Space(id: firstID, name: "Personal", colour: 0) }
+    static func first() -> Space { Space(id: firstID, name: String(localized: "Personal"), colour: 0) }
 
     /// The icon it shows: its own, or a house for the first and a
     /// briefcase for any other that has none yet.
@@ -111,10 +111,10 @@ enum Spaces {
         "graduationcap", "cart", "airplane", "dumbbell", "leaf", "heart",
     ]
     static let iconNames = [
-        "Work", "Office", "Desktop", "Laptop", "Code", "Terminal",
-        "AI", "Thinking", "Ideas", "Games", "Leisure", "Café",
-        "Music", "Film", "Art", "Photos", "Home", "Reading",
-        "Studies", "Shopping", "Travel", "Sport", "Nature", "Personal",
+        String(localized: "Work"), String(localized: "Office"), String(localized: "Desktop"), String(localized: "Laptop"), String(localized: "Code"), String(localized: "Terminal"),
+        String(localized: "AI"), String(localized: "Thinking"), String(localized: "Ideas"), String(localized: "Games"), String(localized: "Leisure"), String(localized: "Café"),
+        String(localized: "Music"), String(localized: "Film"), String(localized: "Art"), String(localized: "Photos"), String(localized: "Home"), String(localized: "Reading"),
+        String(localized: "Studies"), String(localized: "Shopping"), String(localized: "Travel"), String(localized: "Sport"), String(localized: "Nature"), String(localized: "Personal"),
     ]
 
     private static var file: URL { Store.file("spaces.json") }
@@ -896,6 +896,7 @@ struct SpaceDot: View {
     /// space's (idea 954).
     private var space: Space { browser.washSpace }
     private var symbol: String { browser.makingSpace ? "plus" : space.symbol }
+    private var switchKeys: String { KeyCombo.spacesOnCommand ? "⌘1–⌘9" : "⌃1–⌃9" }
     private var key: String { browser.makingSpace ? "new" : "\(space.id.uuidString)-\(space.symbol)" }
     /// The space's colour, if it has one; none while a new one is being made.
     private var tint: Color? { browser.makingSpace ? nil : space.tint }
@@ -926,7 +927,9 @@ struct SpaceDot: View {
         .buttonStyle(.plain)
         .onHover { hovering = $0 }
         .animation(Motion.quick, value: space.look)
-        .help("\(browser.space.name) — \(KeyCombo.spacesOnCommand ? "⌘1–⌘9" : "⌃1–⌃9"), or two fingers \(browser.prefs.sidebar ? "sideways" : "up or down") over the tabs, to switch")
+        .help(browser.prefs.sidebar
+            ? String(localized: "\(browser.space.name) — \(switchKeys), or two fingers sideways over the tabs, to switch")
+            : String(localized: "\(browser.space.name) — \(switchKeys), or two fingers up or down over the tabs, to switch"))
         .onChange(of: key) { _, now in
             let symbol = symbol
             DispatchQueue.main.async {
@@ -1105,20 +1108,20 @@ enum SpaceMenu {
             }
         }
         menu.addItem(.separator())
-        menu.addItem(item("New Space…") { browser.askForSpace() })
+        menu.addItem(item(String(localized: "New Space…")) { browser.askForSpace() })
         // The profiles, once there is more than one (see Profiles.swift).
         if Profiles.shared.several {
             menu.addItem(.separator())
             let profiles = NSMenu()
             for entry in ProfileMenu.items(for: browser) { profiles.addItem(entry) }
-            let holder = NSMenuItem(title: "Profile: \(Profiles.shared.profile(browser.profileID).name)", action: nil, keyEquivalent: "")
+            let holder = NSMenuItem(title: String(localized: "Profile: \(Profiles.shared.profile(browser.profileID).name)"), action: nil, keyEquivalent: "")
             holder.submenu = profiles
             menu.addItem(holder)
         }
         menu.addItem(.separator())
         let here = browser.space
-        menu.addItem(item("Rename “\(here.name)”…") {
-            Ask.name("Rename Space", placeholder: here.name, initial: here.name, confirm: "Rename") { browser.renameSpace(here.id, to: $0) }
+        menu.addItem(item(String(localized: "Rename “\(here.name)”…")) {
+            Ask.name(String(localized: "Rename Space"), placeholder: here.name, initial: here.name, confirm: String(localized: "Rename")) { browser.renameSpace(here.id, to: $0) }
         })
         let icons = NSMenu()
         for (symbol, name) in zip(Spaces.icons, Spaces.iconNames) {
@@ -1126,11 +1129,11 @@ enum SpaceMenu {
             choice.image = NSImage(systemSymbolName: symbol, accessibilityDescription: name)
             icons.addItem(choice)
         }
-        let icon = NSMenuItem(title: "Icon", action: nil, keyEquivalent: "")
+        let icon = NSMenuItem(title: String(localized: "Icon"), action: nil, keyEquivalent: "")
         icon.submenu = icons
         menu.addItem(icon)
         // Everything the space can wear, in one popover (see SpaceLookPicker).
-        menu.addItem(item("Colour…") {
+        menu.addItem(item(String(localized: "Colour…")) {
             // Once the menu has gone: a popover shown while it tracks closes with it.
             DispatchQueue.main.async { SpaceLookPopover.show(for: browser) }
         })
@@ -1139,22 +1142,22 @@ enum SpaceMenu {
         // whole profile past the one beside it, so any profile can come first.
         if let at = browser.spaces.firstIndex(where: { $0.id == here.id }) {
             if at > 0 {
-                menu.addItem(item("Move Left") { browser.moveSpace(here.id, to: at - 1) })
+                menu.addItem(item(String(localized: "Move Left")) { browser.moveSpace(here.id, to: at - 1) })
             } else if browser.profileBeyond(-1) != nil {
-                menu.addItem(item("Move Left") { Profiles.shared.move(browser.profileID, by: -1) })
+                menu.addItem(item(String(localized: "Move Left")) { Profiles.shared.move(browser.profileID, by: -1) })
             }
             if at < browser.spaces.count - 1 {
-                menu.addItem(item("Move Right") { browser.moveSpace(here.id, to: at + 1) })
+                menu.addItem(item(String(localized: "Move Right")) { browser.moveSpace(here.id, to: at + 1) })
             } else if browser.profileBeyond(1) != nil {
-                menu.addItem(item("Move Right") { Profiles.shared.move(browser.profileID, by: 1) })
+                menu.addItem(item(String(localized: "Move Right")) { Profiles.shared.move(browser.profileID, by: 1) })
             }
         }
         // Every group of this space, folded or opened at once, as in Arc.
         if browser.prefs.usesTabGroups, !browser.tabGroups.isEmpty {
             menu.addItem(.separator())
-            let fold = item("Fold All Groups") { browser.foldAllGroups(true) }
+            let fold = item(String(localized: "Fold All Groups")) { browser.foldAllGroups(true) }
             fold.isEnabled = browser.canFoldAllGroups
-            let unfold = item("Unfold All Groups") { browser.foldAllGroups(false) }
+            let unfold = item(String(localized: "Unfold All Groups")) { browser.foldAllGroups(false) }
             unfold.isEnabled = browser.canUnfoldAllGroups
             menu.autoenablesItems = false
             menu.addItem(fold)
@@ -1165,24 +1168,24 @@ enum SpaceMenu {
         // Settings, or one of its own.
         let folder = here.downloads.map { URL(fileURLWithPath: $0).lastPathComponent }
         let places = NSMenu()
-        places.addItem(item("Same as Settings", checked: folder == nil) { browser.setSpaceDownloads(here.id, to: nil) })
+        places.addItem(item(String(localized: "Same as Settings"), checked: folder == nil) { browser.setSpaceDownloads(here.id, to: nil) })
         if let folder {
             places.addItem(item("“\(folder)”", checked: true) {})
         }
         places.addItem(.separator())
-        places.addItem(item("Choose Folder…") { Ask.folder { browser.setSpaceDownloads(here.id, to: $0) } })
-        let downloads = NSMenuItem(title: "Downloads", action: nil, keyEquivalent: "")
+        places.addItem(item(String(localized: "Choose Folder…")) { Ask.folder { browser.setSpaceDownloads(here.id, to: $0) } })
+        let downloads = NSMenuItem(title: String(localized: "Downloads"), action: nil, keyEquivalent: "")
         downloads.submenu = places
         menu.addItem(downloads)
         if browser.canDeleteSpace(here.id) {
             menu.addItem(.separator())
             // Signed in with the others, it has no cookies of its own to erase.
             let own = Spaces.ownsStore(here.id)
-            menu.addItem(item("Delete “\(here.name)”…") {
-                Ask.sure("Delete “\(here.name)”?",
-                         detail: own ? "Its tabs close, and its cookies and sign-ins are erased from this Mac. History and bookmarks stay."
-                                     : "Its tabs and pins close. Your sign-ins, history and bookmarks stay.",
-                         confirm: "Delete") {
+            menu.addItem(item(String(localized: "Delete “\(here.name)”…")) {
+                Ask.sure(String(localized: "Delete “\(here.name)”?"),
+                         detail: own ? String(localized: "Its tabs close, and its cookies and sign-ins are erased from this Mac. History and bookmarks stay.")
+                                     : String(localized: "Its tabs and pins close. Your sign-ins, history and bookmarks stay."),
+                         confirm: String(localized: "Delete")) {
                     browser.deleteSpace(here.id)
                 }
             })
@@ -1221,7 +1224,7 @@ enum Ask {
         field.stringValue = initial
         alert.accessoryView = field
         alert.addButton(withTitle: confirm)
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: String(localized: "Cancel"))
         alert.window.initialFirstResponder = field
         show(alert) { ok in
             let name = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -1233,18 +1236,18 @@ enum Ask {
     /// have — for when the column isn't there to hold the card.
     static func newSpace(then: @escaping (String, Bool) -> Void, cancelled: @escaping () -> Void) {
         let alert = NSAlert()
-        alert.messageText = "New Space"
-        alert.informativeText = "Its own tabs. Signed in where your other spaces are, unless it starts afresh."
+        alert.messageText = String(localized: "New Space")
+        alert.informativeText = String(localized: "Its own tabs. Signed in where your other spaces are, unless it starts afresh.")
         let field = NSTextField(frame: NSRect(x: 0, y: 30, width: 260, height: 24))
-        field.placeholderString = "Work"
-        let fresh = NSButton(checkboxWithTitle: "Start signed out, with its own cookies", target: nil, action: nil)
+        field.placeholderString = String(localized: "Work")
+        let fresh = NSButton(checkboxWithTitle: String(localized: "Start signed out, with its own cookies"), target: nil, action: nil)
         fresh.frame = NSRect(x: 0, y: 0, width: 260, height: 22)
         let box = NSView(frame: NSRect(x: 0, y: 0, width: 260, height: 56))
         box.addSubview(field)
         box.addSubview(fresh)
         alert.accessoryView = box
-        alert.addButton(withTitle: "Create")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: String(localized: "Create"))
+        alert.addButton(withTitle: String(localized: "Cancel"))
         alert.window.initialFirstResponder = field
         show(alert) { ok in
             let name = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -1258,7 +1261,7 @@ enum Ask {
         let alert = NSAlert()
         alert.messageText = title
         alert.informativeText = detail
-        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: String(localized: "OK"))
         show(alert) { _ in }
     }
 
@@ -1273,7 +1276,7 @@ enum Ask {
         alert.informativeText = detail
         let yes = alert.addButton(withTitle: confirm)
         yes.hasDestructiveAction = true
-        let no = alert.addButton(withTitle: "Cancel")
+        let no = alert.addButton(withTitle: String(localized: "Cancel"))
         guard returnCancels else {
             show(alert) { ok in if ok { then() } }
             return
@@ -1298,8 +1301,8 @@ enum Ask {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.canCreateDirectories = true
-        panel.prompt = "Use for This Space"
-        panel.message = "Downloads in this space go here. Cancel keeps the folder it has."
+        panel.prompt = String(localized: "Use for This Space")
+        panel.message = String(localized: "Downloads in this space go here. Cancel keeps the folder it has.")
         guard let window = Links.window else { return }
         panel.beginSheetModal(for: window) { answer in
             if answer == .OK, let url = panel.url { then(url) }

@@ -47,9 +47,9 @@ enum SleepPace: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .later: return "Later"
-        case .normal: return "Normal"
-        case .sooner: return "Sooner"
+        case .later: return String(localized: "Later")
+        case .normal: return String(localized: "Normal")
+        case .sooner: return String(localized: "Sooner")
         }
     }
 
@@ -65,9 +65,9 @@ enum SleepPace: String, CaseIterable, Identifiable {
     /// What the line in Settings says under the choice.
     var detail: String {
         switch self {
-        case .later: return "After two hours away."
-        case .normal: return "After half an hour away."
-        case .sooner: return "After ten minutes away."
+        case .later: return String(localized: "After two hours away.")
+        case .normal: return String(localized: "After half an hour away.")
+        case .sooner: return String(localized: "After ten minutes away.")
         }
     }
 

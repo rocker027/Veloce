@@ -17,6 +17,9 @@ struct SettingsGroup: Identifiable {
     let page: SettingsPanel.Page
     let title: String
     let icon: String
+
+    /// The title as drawn. `title` stays English: the bench reads it.
+    var shownTitle: String { SettingsIndex.shown(title) }
 }
 
 /// One row of Settings.
@@ -53,6 +56,11 @@ struct SettingsItem: Identifiable {
     var findOnly = false
 
     var page: SettingsPanel.Page { SettingsIndex.group(group)?.page ?? .general }
+
+    /// What is drawn: the English above, in the language Search is showing.
+    var shownTitle: String { SettingsIndex.shown(title) }
+    var shownDetail: String { SettingsIndex.shown(detail) }
+    var shownMore: String? { more.map(SettingsIndex.shown) }
 }
 
 enum SettingsIndex {
@@ -103,6 +111,11 @@ enum SettingsIndex {
         // Drawn by ExtensionsPage itself; here so the find field reaches it.
         .init(id: "extensions", page: .extensions, title: "Installed", icon: "puzzlepiece.extension"),
     ]
+
+    /// A row's English looked up in the language table, English where it has none.
+    static func shown(_ english: String) -> String {
+        Bundle.main.localizedString(forKey: english, value: nil, table: nil)
+    }
 
     static func group(_ id: String) -> SettingsGroup? { groups.first { $0.id == id } }
     static func groups(of page: SettingsPanel.Page) -> [SettingsGroup] { groups.filter { $0.page == page } }
@@ -737,7 +750,9 @@ enum SettingsIndex {
         return items
             .filter { item in
                 let group = SettingsIndex.group(item.group)
-                let hay = ([item.title, item.detail, item.more ?? "", group?.title ?? "", item.page.title]
+                // Typed in English or in the language shown: both are searched.
+                let hay = ([item.title, item.detail, item.more ?? "", group?.title ?? "", item.page.englishTitle,
+                            item.shownTitle, item.shownDetail, item.shownMore ?? "", group?.shownTitle ?? "", item.page.title]
                     + item.words + item.keys).joined(separator: " ").lowercased()
                 return words.allSatisfy { hay.contains($0) }
             }
@@ -780,26 +795,26 @@ enum SettingsIndex {
     /// What a dimmed dependent row says instead of its own line.
     static func needs(_ item: SettingsItem) -> String {
         switch item.id {
-        case "pages.dusk": return "Only while Search isn't set to Light"
-        case "inspector.dark": return "Only while Search isn't set to Dark"
-        case "toolbar.left", "tabs.compact", "address.width": return "Only with the tabs across the top"
-        case "sidebar.roomy", "sidebar.doorsUp", "sidebar.foldButton", "sidebar.narrowIcons": return "Only with titles in the column"
-        case "tabs.liquid": return LiquidTab.available ? "Only with titles in the column, or the tabs across the top" : "Liquid Glass needs macOS 26"
-        case "window.glass.style": return GlassStyle.liquidAvailable ? "Only with Glass on" : "Liquid Glass needs macOS 26"
-        case "window.glass.clear", "window.glass.grain": return "With spaces on, in the space's menu › Colour…"
-        case "sidebar.foldIcons": return "Only with the column down a side and not hidden until the edge"
-        case "icloud.erase": return "Only while Sync with iCloud is on"
-        case "profiles.oneWindow": return "Only with more than one profile"
-        case "spaces.links", "links.ask", "spaces.buttons": return "Only with Spaces on"
-        case "sidebar.player": return "Only with titles in the sidebar"
-        case "tabs.frontBeside": return "Only with New tab position on After current"
-        case "newtab.recent", "newtab.arc": return "Only with the new tab in a floating field"
-        case "links.little.tabs": return "Only with links from other apps in a small window"
-        case "mail.default": return "Only with a webmail chosen for email links"
-        case "links.peek.stays": return "Only when links or pins open peeks"
-        case "launcher.key": return "Only with the address field from any app on"
-        case "bookmarks.side": return "Only with the bookmarks bar shown and the tabs down a side"
-        default: return "Only with the tabs down a side"
+        case "pages.dusk": return String(localized: "Only while Search isn't set to Light")
+        case "inspector.dark": return String(localized: "Only while Search isn't set to Dark")
+        case "toolbar.left", "tabs.compact", "address.width": return String(localized: "Only with the tabs across the top")
+        case "sidebar.roomy", "sidebar.doorsUp", "sidebar.foldButton", "sidebar.narrowIcons": return String(localized: "Only with titles in the column")
+        case "tabs.liquid": return LiquidTab.available ? String(localized: "Only with titles in the column, or the tabs across the top") : String(localized: "Liquid Glass needs macOS 26")
+        case "window.glass.style": return GlassStyle.liquidAvailable ? String(localized: "Only with Glass on") : String(localized: "Liquid Glass needs macOS 26")
+        case "window.glass.clear", "window.glass.grain": return String(localized: "With spaces on, in the space's menu › Colour…")
+        case "sidebar.foldIcons": return String(localized: "Only with the column down a side and not hidden until the edge")
+        case "icloud.erase": return String(localized: "Only while Sync with iCloud is on")
+        case "profiles.oneWindow": return String(localized: "Only with more than one profile")
+        case "spaces.links", "links.ask", "spaces.buttons": return String(localized: "Only with Spaces on")
+        case "sidebar.player": return String(localized: "Only with titles in the sidebar")
+        case "tabs.frontBeside": return String(localized: "Only with New tab position on After current")
+        case "newtab.recent", "newtab.arc": return String(localized: "Only with the new tab in a floating field")
+        case "links.little.tabs": return String(localized: "Only with links from other apps in a small window")
+        case "mail.default": return String(localized: "Only with a webmail chosen for email links")
+        case "links.peek.stays": return String(localized: "Only when links or pins open peeks")
+        case "launcher.key": return String(localized: "Only with the address field from any app on")
+        case "bookmarks.side": return String(localized: "Only with the bookmarks bar shown and the tabs down a side")
+        default: return String(localized: "Only with the tabs down a side")
         }
     }
 }
@@ -815,10 +830,10 @@ enum TabsLayout: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .top: return "Top"
-        case .left: return "Left"
-        case .right: return "Right"
-        case .icons: return "Icons only"
+        case .top: return String(localized: "Top")
+        case .left: return String(localized: "Left")
+        case .right: return String(localized: "Right")
+        case .icons: return String(localized: "Icons only")
         }
     }
 }
@@ -827,11 +842,23 @@ enum TabsLayout: String, CaseIterable, Identifiable {
 enum SleepChoice: String, CaseIterable, Identifiable {
     case never, later, normal, sooner
     var id: String { rawValue }
-    var title: String { self == .never ? "Never" : pace!.title }
+    var title: String {
+        switch self {
+        case .never: return String(localized: "Never")
+        case .later: return String(localized: "Later")
+        case .normal: return String(localized: "Normal")
+        case .sooner: return String(localized: "Sooner")
+        }
+    }
     var pace: SleepPace? { SleepPace(rawValue: rawValue) }
+    // Whole sentences rather than SleepPace.detail cut and joined: word order differs by language.
     var detail: String {
-        guard let pace else { return "Every tab keeps its page, however long you leave it." }
-        return pace.detail.replacingOccurrences(of: ".", with: "") + ", a tab rests and wakes when you go back to it."
+        switch self {
+        case .never: return String(localized: "Every tab keeps its page, however long you leave it.")
+        case .later: return String(localized: "After two hours away, a tab rests and wakes when you go back to it.")
+        case .normal: return String(localized: "After half an hour away, a tab rests and wakes when you go back to it.")
+        case .sooner: return String(localized: "After ten minutes away, a tab rests and wakes when you go back to it.")
+        }
     }
 }
 
@@ -841,9 +868,9 @@ enum FloatOwn: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
-        case .never: return "Never"
-        case .tabs: return "Switching tabs"
-        case .tabsOrApps: return "Tabs or apps"
+        case .never: return String(localized: "Never")
+        case .tabs: return String(localized: "Switching tabs")
+        case .tabsOrApps: return String(localized: "Tabs or apps")
         }
     }
 }
@@ -853,7 +880,7 @@ enum FloatOwn: String, CaseIterable, Identifiable {
 enum PeekChoice: String, CaseIterable, Identifiable {
     case off, shift, optionShift, optionCommand
     var id: String { rawValue }
-    var title: String { self == .off ? "Off" : click!.title }
+    var title: String { self == .off ? String(localized: "Off") : click!.title }
     var click: PeekClick? { PeekClick(rawValue: rawValue) }
 }
 
@@ -926,11 +953,11 @@ extension Preferences {
     @discardableResult
     func setUpLikeArc() -> [String] {
         var changed: [String] = []
-        if tabsLayout != .left { tabsLayout = .left; changed.append("tabs on the left") }
-        if !usesSpaces { usesSpaces = true; changed.append("Spaces") }
-        if !listsPins { listsPins = true; changed.append("pinned rows") }
-        if !(pinsGoHome && pinsPeek) { pinsKeepSite = true; changed.append("pins keep their site") }
-        if !floatingNewTab { floatingNewTab = true; changed.append("the floating new tab") }
+        if tabsLayout != .left { tabsLayout = .left; changed.append(String(localized: "tabs on the left")) }
+        if !usesSpaces { usesSpaces = true; changed.append(String(localized: "Spaces")) }
+        if !listsPins { listsPins = true; changed.append(String(localized: "pinned rows")) }
+        if !(pinsGoHome && pinsPeek) { pinsKeepSite = true; changed.append(String(localized: "pins keep their site")) }
+        if !floatingNewTab { floatingNewTab = true; changed.append(String(localized: "the floating new tab")) }
         return changed
     }
 

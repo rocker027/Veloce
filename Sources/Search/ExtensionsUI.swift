@@ -11,7 +11,7 @@ struct ExtensionsPage: View {
             Installer(browser: browser, extensions: .shared)
         } else {
             Card {
-                Line("Chrome extensions", "Need macOS 15.4 or later — the version whose WebKit can run them.") { EmptyView() }
+                Line(String(localized: "Chrome extensions"), String(localized: "Need macOS 15.4 or later — the version whose WebKit can run them.")) { EmptyView() }
             }
         }
     }
@@ -31,7 +31,7 @@ struct ExtensionsPage: View {
                                 .font(.system(size: 13))
                                 .foregroundStyle(Palette.ink)
                             Spacer(minLength: 8)
-                            Pill("Open the Store") {
+                            Pill(String(localized: "Open the Store")) {
                                 browser.open(Browser.webStore, foreground: true)
                             }
                         }
@@ -53,7 +53,7 @@ struct ExtensionsPage: View {
                             if !extensions.busy.isEmpty {
                                 Ring(size: 12)
                             } else {
-                                Pill("Add", filled: true, action: add)
+                                Pill(String(localized: "Add"), filled: true, action: add)
                                     .disabled(Crx.id(in: link) == nil)
                             }
                         }
@@ -66,8 +66,8 @@ struct ExtensionsPage: View {
                 }
 
                 Card {
-                    Line("From another browser", "What Chrome, Arc, Brave and the others added from the Chrome Web Store — installed fresh from the store, you say yes to each one") {
-                        Pill("Bring them over…") {
+                    Line(String(localized: "From another browser"), String(localized: "What Chrome, Arc, Brave and the others added from the Chrome Web Store — installed fresh from the store, you say yes to each one")) {
+                        Pill(String(localized: "Bring them over…")) {
                             browser.bringingExtensions = true
                             browser.lead(to: InternalPage(.importing))
                         }
@@ -75,7 +75,7 @@ struct ExtensionsPage: View {
                 }
 
                 if extensions.installed.isEmpty {
-                    Card { Nothing("No extensions yet.") }
+                    Card { Nothing(String(localized: "No extensions yet.")) }
                 } else {
                     Card {
                         ForEach(Array(extensions.installed.enumerated()), id: \.element.id) { index, item in
@@ -92,8 +92,8 @@ struct ExtensionsPage: View {
                 Recorders()
 
                 Card {
-                    Line("Load an unpacked extension", "A folder with a manifest.json — your own, or one exported from another browser. Reload picks up what you've changed in it since.") {
-                        Pill("Choose…") { extensions.installFolder() }
+                    Line(String(localized: "Load an unpacked extension"), String(localized: "A folder with a manifest.json — your own, or one exported from another browser. Reload picks up what you've changed in it since.")) {
+                        Pill(String(localized: "Choose…")) { extensions.installFolder() }
                     }
                 }
 
@@ -168,8 +168,8 @@ struct ExtensionsPage: View {
                     VStack(spacing: 0) {
                         ForEach(Array(ids.enumerated()), id: \.element) { index, id in
                             if index > 0 { Rule() }
-                            Line(Browser.extensionName(id), "Can record your screen — macOS asks what to share each time") {
-                                Pill("Remove") { ExtensionCapture.forget(id) }
+                            Line(Browser.extensionName(id), String(localized: "Can record your screen — macOS asks what to share each time")) {
+                                Pill(String(localized: "Remove")) { ExtensionCapture.forget(id) }
                             }
                         }
                     }
@@ -263,12 +263,12 @@ struct ExtensionsPage: View {
 
         @ViewBuilder
         private func actions(_ context: WKWebExtensionContext?) -> some View {
-            Button(item.pinned == true ? "Unpin" : "Pin to Toolbar") {
+            Button(item.pinned == true ? String(localized: "Unpin") : String(localized: "Pin to Toolbar")) {
                 extensions.setPinned(item.id, !(item.pinned ?? false))
             }
             if context?.overrideNewTabPageURL != nil {
                 let on = extensions.newTabPageID == item.id
-                Button(on ? "Stop Showing in New Tabs" : "Show in New Tabs") {
+                Button(on ? String(localized: "Stop Showing in New Tabs") : String(localized: "Show in New Tabs")) {
                     extensions.setNewTabPage(on ? nil : item.id)
                 }
             }
@@ -298,17 +298,17 @@ struct ExtensionsPage: View {
         /// Where it was loaded from, by the folder's name — the whole path
         /// is in the tooltip.
         private var folder: String {
-            item.source.map { "From “\(URL(fileURLWithPath: $0).lastPathComponent)”" } ?? "From a folder"
+            item.source.map { String(localized: "From “\(URL(fileURLWithPath: $0).lastPathComponent)”") } ?? String(localized: "From a folder")
         }
 
         private func detail(_ context: WKWebExtensionContext?) -> String {
-            var parts = ["Version \(item.version)", item.fromStore ? "Chrome Web Store" : folder]
-            if item.enabled, context == nil, extensions.notStarted[item.id] == nil { parts.append("couldn't start") }
+            var parts = [String(localized: "Version \(item.version)"), item.fromStore ? "Chrome Web Store" : folder]
+            if item.enabled, context == nil, extensions.notStarted[item.id] == nil { parts.append(String(localized: "couldn't start")) }
             if extensions.newTabPageID == item.id {
-                parts.append("shows in new tabs")
+                parts.append(String(localized: "shows in new tabs"))
             }
-            if context?.hasAccessToPrivateData == true { parts.append("allowed in private tabs") }
-            if let errors = context.map(Extensions.errors(of:)), !errors.isEmpty { parts.append("\(errors.count) warning\(errors.count == 1 ? "" : "s")") }
+            if context?.hasAccessToPrivateData == true { parts.append(String(localized: "allowed in private tabs")) }
+            if let errors = context.map(Extensions.errors(of:)), !errors.isEmpty { parts.append(errors.count == 1 ? String(localized: "1 warning") : String(localized: "\(errors.count) warnings")) }
             return parts.joined(separator: " · ")
         }
     }
@@ -405,7 +405,7 @@ private struct SiteList: View {
                     .padding(.horizontal, 8)
                     .padding(.vertical, 5)
                     .background(Palette.wash, in: RoundedRectangle(cornerRadius: 7, style: .continuous))
-                    Pill("Add", action: add)
+                    Pill(String(localized: "Add"), action: add)
                         .disabled(SiteAccess.host(from: typed) == nil)
                 }
             }
@@ -424,10 +424,10 @@ private struct SiteList: View {
 
     private func note(_ access: SiteAccess) -> String {
         var out = access.mode == .some
-            ? "Subdomains included. Elsewhere it runs once you click its button, on that tab until it leaves the site."
-            : "It runs on a page once you click its button there, on that tab until it leaves the site."
+            ? String(localized: "Subdomains included. Elsewhere it runs once you click its button, on that tab until it leaves the site.")
+            : String(localized: "It runs on a page once you click its button there, on that tab until it leaves the site.")
         if SiteAccess.needsEverySite(name: item.name, said: Extensions.settings(for: item.id)) {
-            out += " \(item.name) may need every site to fill in sign-ins."
+            out += " " + String(localized: "\(item.name) may need every site to fill in sign-ins.")
         }
         return out
     }
@@ -458,7 +458,7 @@ struct StoreOffer: View {
                     Image(systemName: "puzzlepiece.extension")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(Palette.muted)
-                    Text(extensions.busy.contains(id) ? "Adding…" : "Add this extension to Search")
+                    Text(extensions.busy.contains(id) ? String(localized: "Adding…") : String(localized: "Add this extension to Search"))
                         .font(.system(size: 12.5))
                         .foregroundStyle(Palette.ink)
                     if extensions.busy.contains(id) {
@@ -513,7 +513,7 @@ struct HomePageLine: View {
             let current = extensions.newTabPageID
             if !askers.isEmpty {
                 Rule()
-                SettingRow(icon: "house", title: "Home page", detail: detail(askers, current)) {
+                SettingRow(icon: "house", title: String(localized: "Home page"), detail: detail(askers, current)) {
                     Picker("", selection: Binding(
                         get: { current ?? "" },
                         set: { extensions.setNewTabPage($0.isEmpty ? nil : $0) }
@@ -531,11 +531,11 @@ struct HomePageLine: View {
 
         private func detail(_ askers: [Installed], _ current: String?) -> String {
             if let current, let name = askers.first(where: { $0.id == current })?.name {
-                return "New tabs show \(name)'s page, since you let it replace them"
+                return String(localized: "New tabs show \(name)'s page, since you let it replace them")
             }
             return askers.count == 1
-                ? "New tabs open blank. \(askers[0].name) asked to show its page instead"
-                : "New tabs open blank. \(askers.count) extensions asked to show their page instead"
+                ? String(localized: "New tabs open blank. \(askers[0].name) asked to show its page instead")
+                : String(localized: "New tabs open blank. \(askers.count) extensions asked to show their page instead")
         }
     }
 }

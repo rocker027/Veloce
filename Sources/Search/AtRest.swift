@@ -56,7 +56,8 @@ struct AtRest: Equatable {
 
     /// All of it as one line, as read aloud and as the bench reports it.
     var text: String {
-        (kind == .notSecure ? "Not secure — " : "") + lead + name + tail
+        let line = lead + name + tail
+        return kind == .notSecure ? String(localized: "Not secure — \(line)") : line
     }
 
     /// The page on screen (`Tab.pageAddress`), at rest. Nil for a tab with
@@ -113,13 +114,13 @@ struct AtRest: Equatable {
             return AtRest(kind: scheme == "https" || local ? .secure : .notSecure, lead: lead, name: name, tail: tail)
         case "file":
             let file = url.lastPathComponent
-            return AtRest(kind: .file, lead: "", name: file.isEmpty || file == "/" ? "File" : file, tail: "")
+            return AtRest(kind: .file, lead: "", name: file.isEmpty || file == "/" ? String(localized: "File") : file, tail: "")
         case "about", "":
             return nil
         case "chrome-extension", "webkit-extension":
-            return AtRest(kind: .other, lead: "", name: "Extension page", tail: "")
+            return AtRest(kind: .other, lead: "", name: String(localized: "Extension page"), tail: "")
         default:
-            return AtRest(kind: .other, lead: "", name: "Not a website", tail: "")
+            return AtRest(kind: .other, lead: "", name: String(localized: "Not a website"), tail: "")
         }
     }
 

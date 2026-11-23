@@ -38,10 +38,10 @@ final class Links: NSObject, NSApplicationDelegate {
         askingToQuit = true
         defer { askingToQuit = false }
         let alert = NSAlert()
-        alert.messageText = "Quit Search?"
-        alert.informativeText = "Your windows and tabs will close."
-        alert.addButton(withTitle: "Quit").keyEquivalent = ""
-        let cancel = alert.addButton(withTitle: "Cancel")
+        alert.messageText = String(localized: "Quit Search?")
+        alert.informativeText = String(localized: "Your windows and tabs will close.")
+        alert.addButton(withTitle: String(localized: "Quit")).keyEquivalent = ""
+        let cancel = alert.addButton(withTitle: String(localized: "Cancel"))
         alert.window.defaultButtonCell = cancel.cell as? NSButtonCell
         // Making Cancel the Return default replaces its Escape equivalent.
         let escape = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
@@ -277,7 +277,7 @@ final class Links: NSObject, NSApplicationDelegate {
     /// New Window in the Dock icon's menu, as every browser has it.
     func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
         let menu = NSMenu()
-        let item = NSMenuItem(title: "New Window", action: #selector(newWindow), keyEquivalent: "")
+        let item = NSMenuItem(title: String(localized: "New Window"), action: #selector(newWindow), keyEquivalent: "")
         item.target = self
         menu.addItem(item)
         return menu

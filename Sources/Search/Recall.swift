@@ -24,7 +24,7 @@ enum When {
 
     private static let plain: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "d MMMM"
+        formatter.dateFormat = String(localized: "d MMMM")
         return formatter
     }()
 
@@ -33,8 +33,8 @@ enum When {
 
     static func day(_ date: Date) -> String {
         let calendar = Calendar.current
-        if calendar.isDateInToday(date) { return "Today" }
-        if calendar.isDateInYesterday(date) { return "Yesterday" }
+        if calendar.isDateInToday(date) { return String(localized: "Today") }
+        if calendar.isDateInYesterday(date) { return String(localized: "Yesterday") }
         return plain.string(from: date)
     }
 }
@@ -53,12 +53,12 @@ struct HistoryPanel: View {
     private var clearing: Bool { browser.recallMode == .clearing }
 
     var body: some View {
-        Plate("History", width: 600, close: { browser.recalling = false }) {
+        Plate(String(localized: "History"), width: 600, close: { browser.recalling = false }) {
             VStack(alignment: .leading, spacing: 14) {
-                Hunt(text: $browser.recallHunt, prompt: "Search everywhere you have been", focus: $hunting)
+                Hunt(text: $browser.recallHunt, prompt: String(localized: "Search everywhere you have been"), focus: $hunting)
 
                 if traces.isEmpty {
-                    Card { Nothing(browser.recallHunt.isEmpty ? "Nothing yet." : "Nothing matches.") }
+                    Card { Nothing(browser.recallHunt.isEmpty ? String(localized: "Nothing yet.") : String(localized: "Nothing matches.")) }
                 } else {
                     // Lazy: only the lines in view are made. Two thousand of
                     // them, each with its icon, took the panel a third of a
@@ -113,11 +113,11 @@ struct HistoryPanel: View {
                 sweeps
             } else {
                 HStack {
-                    Text(traces.count == 1 ? "1 page" : "\(traces.count) pages")
+                    Text(traces.count == 1 ? String(localized: "1 page") : String(localized: "\(traces.count) pages"))
                         .font(.system(size: 12))
                         .foregroundStyle(Palette.muted)
                     Spacer()
-                    Pill("Clear…") { withAnimation(Motion.settle) { browser.recallMode = .clearing } }
+                    Pill(String(localized: "Clear…")) { withAnimation(Motion.settle) { browser.recallMode = .clearing } }
                 }
             }
         }
@@ -136,7 +136,7 @@ struct HistoryPanel: View {
     private var sweeps: some View {
         VStack(alignment: .leading, spacing: 10) {
             Card {
-                Line("History", historyDetail) {
+                Line(String(localized: "History"), historyDetail) {
                     let scopes = browser.historyScopes
                     if !scopes.isEmpty {
                         Picker("", selection: $clearsIn) {
@@ -147,7 +147,7 @@ struct HistoryPanel: View {
                         .pickerStyle(.menu)
                         .fixedSize()
                     }
-                    Pill("Clear") {
+                    Pill(String(localized: "Clear")) {
                         browser.clearHistory(in: scopes.contains { $0.space == clearsIn } ? clearsIn : nil)
                         clearsIn = nil
                         refresh()
@@ -155,17 +155,17 @@ struct HistoryPanel: View {
                     }
                 }
                 Rule()
-                Line("Cookies and sign-ins", "Signs you out of every site") {
-                    Pill("Sign out of everything") { browser.clearSites() }
+                Line(String(localized: "Cookies and sign-ins"), String(localized: "Signs you out of every site")) {
+                    Pill(String(localized: "Sign out of everything")) { browser.clearSites() }
                 }
                 Rule()
-                Line("Cache", "Only what was fetched to draw pages") {
-                    Pill("Clear") { browser.clearCache() }
+                Line(String(localized: "Cache"), String(localized: "Only what was fetched to draw pages")) {
+                    Pill(String(localized: "Clear")) { browser.clearCache() }
                 }
             }
             HStack {
                 Spacer()
-                Pill("Back") { withAnimation(Motion.settle) { browser.recallMode = .history } }
+                Pill(String(localized: "Back")) { withAnimation(Motion.settle) { browser.recallMode = .history } }
             }
         }
         .transition(.opacity)
@@ -173,9 +173,9 @@ struct HistoryPanel: View {
 
     private var historyDetail: String {
         guard let clearsIn, let scope = browser.historyScopes.first(where: { $0.space == clearsIn }) else {
-            return "Everywhere you have been"
+            return String(localized: "Everywhere you have been")
         }
-        return "Where you have been in \(scope.name)"
+        return String(localized: "Where you have been in \(scope.name)")
     }
 
     private func refresh() {
@@ -250,7 +250,7 @@ struct HistoryPanel: View {
                 }
                 Spacer(minLength: 8)
                 if hovering {
-                    Quick("Remove", tint: .red.opacity(0.75), act: forget)
+                    Quick(String(localized: "Remove"), tint: .red.opacity(0.75), act: forget)
                 } else {
                     Text(When.clock(trace.last))
                         .font(.system(size: 11.5))
@@ -298,10 +298,10 @@ struct DownloadsPanel: View {
                     .font(.system(size: 12.5, weight: .semibold))
                     .foregroundStyle(Palette.ink)
                 Spacer(minLength: 0)
-                Door(icon: "folder", help: "Open the Downloads Folder") {
+                Door(icon: "folder", help: String(localized: "Open the Downloads Folder")) {
                     NSWorkspace.shared.open(browser.downloadsFolder)
                 }
-                if let close { Door(icon: "xmark", help: "Close", act: close) }
+                if let close { Door(icon: "xmark", help: String(localized: "Close"), act: close) }
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
@@ -313,7 +313,7 @@ struct DownloadsPanel: View {
                 Rectangle().fill(Palette.hairline).frame(height: 1)
                 HStack {
                     Spacer()
-                    Pill("Clear list") { loot.forgetAll() }
+                    Pill(String(localized: "Clear list")) { loot.forgetAll() }
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
@@ -323,17 +323,17 @@ struct DownloadsPanel: View {
     }
 
     private var plate: some View {
-        Plate("Downloads", width: 560, close: close ?? { browser.hoarding = false }) {
+        Plate(String(localized: "Downloads"), width: 560, close: close ?? { browser.hoarding = false }) {
             list
         } foot: {
             HStack {
-                Text(loot.kept.isEmpty ? "Files land in \(browser.downloadsFolder.lastPathComponent)"
-                     : "Clearing the list leaves the files where they are")
+                Text(loot.kept.isEmpty ? String(localized: "Files land in \(browser.downloadsFolder.lastPathComponent)")
+                     : String(localized: "Clearing the list leaves the files where they are"))
                     .font(.system(size: 12))
                     .foregroundStyle(Palette.muted)
                 Spacer()
                 if !loot.kept.isEmpty {
-                    Pill("Clear list") { loot.forgetAll() }
+                    Pill(String(localized: "Clear list")) { loot.forgetAll() }
                 }
             }
         }
@@ -342,13 +342,13 @@ struct DownloadsPanel: View {
     @ViewBuilder
     private var list: some View {
         if fetches.entries.isEmpty && loot.kept.isEmpty {
-            Card { Nothing("Nothing downloaded yet.") }
+            Card { Nothing(String(localized: "Nothing downloaded yet.")) }
         } else {
             FadingScroll {
                 LazyVStack(alignment: .leading, spacing: 10) {
                     if !fetches.entries.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
-                            Caption("Current downloads")
+                            Caption(String(localized: "Current downloads"))
                             Card {
                                 ForEach(Array(fetches.entries.enumerated()), id: \.element.id) { index, entry in
                                     if index > 0 { Rule() }
@@ -366,7 +366,7 @@ struct DownloadsPanel: View {
 
                     if !loot.kept.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
-                            Caption("Completed")
+                            Caption(String(localized: "Completed"))
                             Card {
                                 ForEach(Array(loot.kept.enumerated()), id: \.element.id) { index, keep in
                                     if index > 0 { Rule() }
@@ -443,18 +443,18 @@ struct DownloadsPanel: View {
 
         private var bytes: String {
             let received = ByteCountFormatter.string(fromByteCount: entry.completedBytes, countStyle: .file)
-            guard entry.totalBytes > 0 else { return received + " downloaded" }
+            guard entry.totalBytes > 0 else { return String(localized: "\(received) downloaded") }
             let total = ByteCountFormatter.string(fromByteCount: entry.totalBytes, countStyle: .file)
-            return "\(received) of \(total)"
+            return String(localized: "\(received) of \(total)")
         }
 
         private var stateLabel: String {
             switch entry.state {
-            case .downloading: return "Downloading"
+            case .downloading: return String(localized: "Downloading")
             case .pausing: return entry.stopping
-            case .paused: return "Paused"
-            case .resuming: return "Resuming…"
-            case .failed: return "Failed"
+            case .paused: return String(localized: "Paused")
+            case .resuming: return String(localized: "Resuming…")
+            case .failed: return String(localized: "Failed")
             }
         }
 
@@ -499,7 +499,7 @@ struct DownloadsPanel: View {
                             .truncationMode(.middle)
                     }
                     if case .failed = entry.state {
-                        Text(entry.errorDescription ?? "The download failed.")
+                        Text(entry.errorDescription ?? String(localized: "The download failed."))
                             .font(.system(size: 11.5))
                             .foregroundStyle(Palette.muted)
                             .fixedSize(horizontal: false, vertical: true)
@@ -520,39 +520,39 @@ struct DownloadsPanel: View {
             switch entry.state {
             case .downloading:
                 HStack(spacing: 4) {
-                    if entry.canPause { Quick("Pause", act: pause) }
-                    Quick("Cancel", act: cancel)
+                    if entry.canPause { Quick(String(localized: "Pause"), act: pause) }
+                    Quick(String(localized: "Cancel"), act: cancel)
                 }
             case .pausing:
                 HStack(spacing: 4) {
                     Quick(entry.stopping, act: {})
                         .disabled(true)
-                    Quick("Cancel", act: cancel)
+                    Quick(String(localized: "Cancel"), act: cancel)
                 }
             case .paused:
                 HStack(spacing: 4) {
                     if entry.canResume {
-                        Quick("Resume", act: resume)
+                        Quick(String(localized: "Resume"), act: resume)
                     } else if entry.canRetry {
-                        Quick("Retry", act: retry)
+                        Quick(String(localized: "Retry"), act: retry)
                             .help("Start the download again from the beginning")
                     }
-                    Quick("Remove", act: cancel)
+                    Quick(String(localized: "Remove"), act: cancel)
                 }
             case .resuming:
                 HStack(spacing: 4) {
-                    Quick("Resuming…", act: {})
+                    Quick(String(localized: "Resuming…"), act: {})
                         .disabled(true)
-                    Quick("Cancel", act: cancel)
+                    Quick(String(localized: "Cancel"), act: cancel)
                 }
             case .failed:
                 HStack(spacing: 4) {
-                    if entry.canResume { Quick("Resume", act: resume) }
+                    if entry.canResume { Quick(String(localized: "Resume"), act: resume) }
                     if entry.canRetry {
-                        Quick("Retry", act: retry)
+                        Quick(String(localized: "Retry"), act: retry)
                             .help("Start the download again from the beginning")
                     }
-                    Quick("Remove", act: cancel)
+                    Quick(String(localized: "Remove"), act: cancel)
                 }
             }
         }
@@ -585,8 +585,8 @@ struct DownloadsPanel: View {
                 }
                 Spacer(minLength: 8)
                 if hovering {
-                    if keep.stillThere { Quick("Show in Finder", act: reveal) }
-                    Quick("Remove", tint: .red.opacity(0.75), act: forget)
+                    if keep.stillThere { Quick(String(localized: "Show in Finder"), act: reveal) }
+                    Quick(String(localized: "Remove"), tint: .red.opacity(0.75), act: forget)
                 }
             }
             .padding(.horizontal, 14)

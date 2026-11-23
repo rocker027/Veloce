@@ -172,11 +172,11 @@ struct ArchivePanel: View {
 
     var body: some View {
         let listed = self.listed
-        Plate("Archived Tabs", width: 600, close: { browser.archiving = false }) {
+        Plate(String(localized: "Archived Tabs"), width: 600, close: { browser.archiving = false }) {
             VStack(alignment: .leading, spacing: 14) {
-                Hunt(text: $hunt, prompt: "Search the tabs Search closed", focus: $hunting)
+                Hunt(text: $hunt, prompt: String(localized: "Search the tabs Search closed"), focus: $hunting)
                 if listed.isEmpty {
-                    Card { Nothing(hunt.isEmpty ? empty : "Nothing matches.") }
+                    Card { Nothing(hunt.isEmpty ? empty : String(localized: "Nothing matches.")) }
                 } else {
                     ScrollView(showsIndicators: false) {
                         LazyVStack(alignment: .leading, spacing: 0) {
@@ -212,7 +212,7 @@ struct ArchivePanel: View {
             }
         } foot: {
             HStack {
-                Text(listed.count == 1 ? "1 tab" : "\(listed.count) tabs")
+                Text(listed.count == 1 ? String(localized: "1 tab") : String(localized: "\(listed.count) tabs"))
                     .font(.system(size: 12))
                     .foregroundStyle(Palette.muted)
                 Text("· kept for 30 days")
@@ -220,7 +220,7 @@ struct ArchivePanel: View {
                     .foregroundStyle(Palette.faint)
                 Spacer()
                 if !archive.tabs.isEmpty {
-                    Pill("Clear") { archive.clear() }
+                    Pill(String(localized: "Clear")) { archive.clear() }
                 }
             }
         }
@@ -229,8 +229,8 @@ struct ArchivePanel: View {
 
     private var empty: String {
         browser.prefs.tabLife.interval == nil
-            ? "Tabs never close by themselves (Settings › Tabs)."
-            : "Nothing yet. Tabs Search closes for you land here."
+            ? String(localized: "Tabs never close by themselves (Settings › Tabs).")
+            : String(localized: "Nothing yet. Tabs Search closes for you land here.")
     }
 
     private struct Line: Identifiable {
@@ -287,7 +287,7 @@ struct ArchivePanel: View {
                 }
                 Spacer(minLength: 8)
                 if hovering {
-                    Quick("Remove", tint: .red.opacity(0.75), act: remove)
+                    Quick(String(localized: "Remove"), tint: .red.opacity(0.75), act: remove)
                 } else {
                     Text(When.clock(tab.closed))
                         .font(.system(size: 11.5))

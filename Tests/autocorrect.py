@@ -121,7 +121,7 @@ def launch():
     """The copy, hidden, never brought forward → a bench tab on the page,
     behind the tab the window opened with."""
     if os.path.exists(SOCK): os.remove(SOCK)
-    subprocess.run(["open", "-n", "-g", "-j", "--env", f"SEARCH_PROBE={W}", str(COPY)], check=True)
+    subprocess.run(["open", "-n", "-g", "-j", "--env", f"SEARCH_PROBE={W}", str(COPY), "--args", "-AppleLanguages", "(en)"], check=True)
     for _ in range(150):
         if os.path.exists(SOCK): break
         time.sleep(0.1)

@@ -9,12 +9,12 @@ struct HiddenPanel: View {
     @ObservedObject var browser: Browser
 
     var body: some View {
-        Plate(browser.hereHost ?? "This page", width: 380, close: { browser.reviewing = false }) {
+        Plate(browser.hereHost ?? String(localized: "This page"), width: 380, close: { browser.reviewing = false }) {
             if browser.hereVeils.isEmpty {
-                Card { Nothing("Nothing is hidden here.") }
+                Card { Nothing(String(localized: "Nothing is hidden here.")) }
             } else {
                 VStack(alignment: .leading, spacing: 6) {
-                    Caption("Hidden on this site — rest on a line to see it")
+                    Caption(String(localized: "Hidden on this site — rest on a line to see it"))
                     ScrollView(showsIndicators: false) {
                         Card {
                             ForEach(Array(browser.hereVeils.enumerated()), id: \.element.id) { index, veil in
@@ -33,10 +33,10 @@ struct HiddenPanel: View {
             }
         } foot: {
             HStack(spacing: 8) {
-                Pill("Hide something…", filled: true) { browser.toggleHiding() }
-                    .shortcutHelp("Hide Something", "view.hide")
+                Pill(String(localized: "Hide something…"), filled: true) { browser.toggleHiding() }
+                    .shortcutHelp(String(localized: "Hide Something"), "view.hide")
                 if !browser.hereVeils.isEmpty {
-                    Pill("Restore all") { browser.restoreAll() }
+                    Pill(String(localized: "Restore all")) { browser.restoreAll() }
                 }
                 Spacer()
             }
@@ -71,7 +71,7 @@ struct HiddenPanel: View {
                 }
                 Spacer(minLength: 8)
 
-                Quick("Restore", act: restore)
+                Quick(String(localized: "Restore"), act: restore)
                     .opacity(hovering ? 1 : 0)
             }
             .padding(.horizontal, 14)

@@ -8,11 +8,11 @@ enum CaptureChoices {
         var id: Self { self }
         var title: String {
             switch self {
-            case .camera: return "Camera"
-            case .microphone: return "Microphone"
-            case .cameraAndMicrophone: return "Camera and microphone together"
-            case .location: return "Location"
-            case .notifications: return "Notifications"
+            case .camera: return String(localized: "Camera")
+            case .microphone: return String(localized: "Microphone")
+            case .cameraAndMicrophone: return String(localized: "Camera and microphone together")
+            case .location: return String(localized: "Location")
+            case .notifications: return String(localized: "Notifications")
             }
         }
         var suffix: String {
@@ -46,10 +46,10 @@ enum CaptureChoices {
         case ask, allow, refuse, different
         var title: String {
             switch self {
-            case .ask: return "Ask"
-            case .allow: return "Allow"
-            case .refuse: return "Refuse"
-            case .different: return "Different"
+            case .ask: return String(localized: "Ask")
+            case .allow: return String(localized: "Allow")
+            case .refuse: return String(localized: "Refuse")
+            case .different: return String(localized: "Different")
             }
         }
     }

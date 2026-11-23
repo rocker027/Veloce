@@ -94,11 +94,11 @@ struct AgentLauncher: Equatable {
     /// Why a launcher can't be remembered, or nil when it can.
     static func refusal(signed: Bool, adhoc: Bool, team: String, identifier: String, path: String) -> String? {
         let name = (path as NSString).lastPathComponent
-        let called = name.isEmpty ? "the program that started it" : name
-        guard signed else { return "\(called), which started it, isn't signed" }
-        guard !adhoc, !team.isEmpty else { return "\(called), which started it, isn't signed by a named developer" }
+        let called = name.isEmpty ? String(localized: "the program that started it") : name
+        guard signed else { return String(localized: "\(called), which started it, isn't signed") }
+        guard !adhoc, !team.isEmpty else { return String(localized: "\(called), which started it, isn't signed by a named developer") }
         guard let expected = allowed[identifier], expected == team else {
-            return "it was started by \(called), which isn't an agent's own program Search knows"
+            return String(localized: "it was started by \(called), which isn't an agent's own program Search knows")
         }
         return nil
     }
@@ -187,7 +187,7 @@ enum AgentIdentity {
         // What it says it is, checked against what Search says that is.
         if out.unrememberable == nil,
            !(AgentLauncher.requirements[out.identifier].map { passes(code, $0) } ?? false) {
-            out.unrememberable = "\(out.name), which started it, isn't signed as \(out.identifier) must be"
+            out.unrememberable = String(localized: "\(out.name), which started it, isn't signed as \(out.identifier) must be")
         }
         return out
     }

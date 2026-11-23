@@ -77,7 +77,7 @@ private struct AgentStatusFace: View {
                         .background(ClickSpot { AgentControl.shared.stopButton = $0 })
                 }
                 .buttonStyle(.plain)
-                .shortcutHelp("\(AgentWords.short(session)). Click to stop it.", "file.stopAgent")
+                .shortcutHelp(String(localized: "\(AgentWords.short(session)). Click to stop it."), "file.stopAgent")
             case .row, .door:
                 VStack(alignment: .leading, spacing: 1) {
                     HStack(spacing: 6) {
@@ -100,7 +100,7 @@ private struct AgentStatusFace: View {
                     }
                 }
                 .padding(.horizontal, style == .row ? 10 : 4)
-                .help(AgentWords.short(session) + ". Stop disconnects it; its tabs stay.")
+                .help("\(AgentWords.short(session)). Stop disconnects it; its tabs stay.")
                 .fixedSize(horizontal: style == .door, vertical: true)
             }
         }
@@ -169,7 +169,7 @@ struct AgentRowStop: View {
                 .contentShape(Capsule())
         }
         .buttonStyle(.plain)
-        .shortcutHelp("Stop the coding agent. Its tabs stay where they are.", "file.stopAgent")
+        .shortcutHelp(String(localized: "Stop the coding agent. Its tabs stay where they are."), "file.stopAgent")
     }
 }
 
@@ -178,7 +178,7 @@ struct StopAgentMenuItem: View {
     @ObservedObject private var agents = AgentControl.shared
 
     var body: some View {
-        Button(agents.shownIn == nil ? "Stop Agent" : "Stop \(agents.session?.client ?? "Agent")") {
+        Button(agents.shownIn == nil ? String(localized: "Stop Agent") : String(localized: "Stop \(agents.session?.client ?? String(localized: "Agent"))")) {
             AgentControl.shared.stopSession()
         }
         .shortcut("file.stopAgent")
@@ -190,19 +190,19 @@ struct StopAgentMenuItem: View {
 enum AgentWords {
     @MainActor
     static func line(_ session: AgentSession) -> String {
-        session.busy ? "\(session.client) is using Search" : "\(session.client), idle"
+        session.busy ? String(localized: "\(session.client) is using Search") : String(localized: "\(session.client), idle")
     }
 
     /// Said for a few seconds once let in without asking.
     @MainActor
     static func admitted(_ session: AgentSession) -> String {
-        "\(session.client) let in automatically"
+        String(localized: "\(session.client) let in automatically")
     }
 
     /// In the strip, where there is room for one short line.
     @MainActor
     static func short(_ session: AgentSession) -> String {
-        session.auto ? "\(session.client) · Allowed automatically" : line(session)
+        session.auto ? String(localized: "\(session.client) · Allowed automatically") : line(session)
     }
 }
 
@@ -287,16 +287,13 @@ private struct AgentQuestion: View {
 
     private var alwaysHelp: String {
         guard let launcher = session.launcher else { return "" }
-        return "Next time, if it is started by \(launcher.name), signed by \(launcher.who), and calls itself “\(session.client)”, "
-            + "it is let in without asking, for 30 days at most and 7 after it was last used, seeing only its own tabs. "
-            + "Stop shows as ever, and stopping it asks again next time. Forget it in Settings › About › Developer."
+        return String(localized: "Next time, if it is started by \(launcher.name), signed by \(launcher.who), and calls itself “\(session.client)”, it is let in without asking, for 30 days at most and 7 after it was last used, seeing only its own tabs. Stop shows as ever, and stopping it asks again next time. Forget it in Settings › About › Developer.")
     }
 
     /// The name is the program's own word for itself; this is macOS's.
     private var detail: String {
-        let from = session.program.isEmpty ? "" : "From \(session.program) on this Mac. "
-        return from + "It works in tabs of its own while you watch, until you press Stop. "
-            + "It never sees passwords, card numbers, private tabs or Settings."
+        let from = session.program.isEmpty ? "" : String(localized: "From \(session.program) on this Mac. ")
+        return from + String(localized: "It works in tabs of its own while you watch, until you press Stop. It never sees passwords, card numbers, private tabs or Settings.")
     }
 }
 

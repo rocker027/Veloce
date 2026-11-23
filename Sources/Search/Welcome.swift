@@ -90,7 +90,7 @@ struct WelcomePanel: View {
         VStack(spacing: 22) {
             Plate(size: 72)
             VStack(spacing: 10) {
-                Text("Search")
+                Text(verbatim: "Search")
                     .font(.system(size: 34, weight: .medium))
                     .foregroundStyle(Palette.ink)
                 Text("A browser with nothing in the way. Four megabytes, the engine already in your Mac, and as little around the page as we could manage.")
@@ -126,7 +126,7 @@ struct WelcomePanel: View {
 
     private var bring: some View {
         VStack(alignment: .leading, spacing: 22) {
-            heading("Bring things over.", "Passwords go into your keychain, bookmarks into the menu, and history means the address field already knows where you go. Nothing in the other browser changes.")
+            heading(String(localized: "Bring things over."), String(localized: "Passwords go into your keychain, bookmarks into the menu, and history means the address field already knows where you go. Nothing in the other browser changes."))
 
             let sources = ImportSource.installed()
             let unreadable = Chromium.unreadable()
@@ -155,19 +155,19 @@ struct WelcomePanel: View {
                         .font(.system(size: 12))
                         .foregroundStyle(Palette.faint)
                     if importsPasswords {
-                        Choice("Passwords", "macOS will ask once for that browser's keychain key", on: $wantsPasswords)
+                        Choice(String(localized: "Passwords"), String(localized: "macOS will ask once for that browser's keychain key"), on: $wantsPasswords)
                     } else {
                         Text((source ?? sources[0]).passwordsInPasswordsApp
-                             ? "\((source ?? sources[0]).name) keeps passwords in the Passwords app: export them there, then bring in the file below."
-                             : "Passwords from \((source ?? sources[0]).name) aren't supported yet.")
+                             ? String(localized: "\((source ?? sources[0]).name) keeps passwords in the Passwords app: export them there, then bring in the file below.")
+                             : String(localized: "Passwords from \((source ?? sources[0]).name) aren't supported yet."))
                             .font(.system(size: 13)).foregroundStyle(Palette.muted)
                     }
-                    Choice("Bookmarks", "Folders and all, behind the bookmark button", on: $wantsBookmarks)
-                    Choice("History", "The last few thousand places, for finishing addresses", on: $wantsHistory)
+                    Choice(String(localized: "Bookmarks"), String(localized: "Folders and all, behind the bookmark button"), on: $wantsBookmarks)
+                    Choice(String(localized: "History"), String(localized: "The last few thousand places, for finishing addresses"), on: $wantsHistory)
                 }
 
                 HStack(spacing: 12) {
-                    Big(bringing ? "Bringing…" : "Bring them in", filled: true) { bringAll() }
+                    Big(bringing ? String(localized: "Bringing…") : String(localized: "Bring them in"), filled: true) { bringAll() }
                         .disabled(bringing || brought != nil || !((importsPasswords && wantsPasswords) || wantsHistory || wantsBookmarks))
                     if bringing { Ring(size: 10) }
                     if let brought {
@@ -189,18 +189,18 @@ struct WelcomePanel: View {
 
             // Safari, a browser on another Mac, one Search can't read: what
             // it exported, bookmarks, passwords or Safari's own ZIP.
-            Pill("From a file another browser exported…") { browser.importFile() }
+            Pill(String(localized: "From a file another browser exported…")) { browser.importFile() }
         }
     }
 
     private var hold: some View {
         VStack(alignment: .leading, spacing: 22) {
-            heading("Two ways to hold it.", "Titles down the side, or across the top. The grey slides to the tab you pick either way, and you can change your mind with ⇧⌘S.")
+            heading(String(localized: "Two ways to hold it."), String(localized: "Titles down the side, or across the top. The grey slides to the tab you pick either way, and you can change your mind with ⇧⌘S."))
             HStack(spacing: 12) {
-                Way(title: "Sidebar", sidebar: true, glyph: prefs.glyph, chosen: prefs.sidebar) {
+                Way(title: String(localized: "Sidebar"), sidebar: true, glyph: prefs.glyph, chosen: prefs.sidebar) {
                     withAnimation(Motion.glide) { prefs.sidebar = true }
                 }
-                Way(title: "Tab strip", sidebar: false, glyph: prefs.glyph, chosen: !prefs.sidebar) {
+                Way(title: String(localized: "Tab strip"), sidebar: false, glyph: prefs.glyph, chosen: !prefs.sidebar) {
                     withAnimation(Motion.glide) { prefs.sidebar = false }
                 }
             }
@@ -215,7 +215,7 @@ struct WelcomePanel: View {
 
     private var links: some View {
         VStack(alignment: .leading, spacing: 22) {
-            heading("Links from other apps.", "A click in Mail, in Slack, in a PDF — macOS sends it to whichever browser is the default. It can be this one.")
+            heading(String(localized: "Links from other apps."), String(localized: "A click in Mail, in Slack, in a PDF — macOS sends it to whichever browser is the default. It can be this one."))
             HStack(spacing: 12) {
                 if isDefault {
                     HStack(spacing: 8) {
@@ -226,7 +226,7 @@ struct WelcomePanel: View {
                     .font(.system(size: 13))
                     .foregroundStyle(Palette.ink)
                 } else {
-                    Big("Make Search the default", filled: true) {
+                    Big(String(localized: "Make Search the default"), filled: true) {
                         asked = true
                         Links.becomeDefault { _ in isDefault = Links.isDefault }
                     }
@@ -246,25 +246,25 @@ struct WelcomePanel: View {
                     .textCase(.uppercase)
                     .tracking(0.6)
                     .padding(.top, 6)
-                Key("⌘T", "A new tab. Type a place, or words to search.")
-                Key("⌘K", "Every open tab, by name.")
-                Key("⌘,", "Settings, including passwords and updates. ⌘F there finds any setting.")
-                Key("⌃1", "Spaces: separate tabs and sign-ins. Turn them on in Settings › Spaces & Pins, or Set Up Like Arc there.")
-                Key("⌥⌘N", "Split a page in two, ⌥-click a tab to put it beside the page, or drag a tab onto a page; ⌃⌘← and ⌃⌘→ go from one page to the other, and ⌥⌘N again puts them apart.")
-                Key("⌘O", "Links from other apps open in a small window; ⌘O keeps one as a tab. Settings › Browsing.")
-                Key("⌘L", "Suggestions from your search engine as you type — off until you turn them on in Settings › Browsing.")
-                Key("⌘", "Held, it can show each tab's number for ⌘1–9. Settings › Tabs.")
-                Key("⌘,", "A painted wall behind the blank tab, if you want one — Settings › Themes. Off until you choose.")
-                Key("⌘1", "Pressed again on its pin, back to where you were.")
-                Key("⇧⌘P", "Float a video in Search's window, or in macOS's picture in picture. Settings › Browsing.")
-                Key("⌃-click", "Claude or ChatGPT in a side panel beside the page: right-click a tab › Open in Side Panel, or View › Side Panel.")
-                Key("⌘Q", "Search can ask before it quits. Settings › General.")
-                Key("⌘,", "Your Apple passwords, under the sign-in field — Settings › Passwords.")
+                Key("⌘T", String(localized: "A new tab. Type a place, or words to search."))
+                Key("⌘K", String(localized: "Every open tab, by name."))
+                Key("⌘,", String(localized: "Settings, including passwords and updates. ⌘F there finds any setting."))
+                Key("⌃1", String(localized: "Spaces: separate tabs and sign-ins. Turn them on in Settings › Spaces & Pins, or Set Up Like Arc there."))
+                Key("⌥⌘N", String(localized: "Split a page in two, ⌥-click a tab to put it beside the page, or drag a tab onto a page; ⌃⌘← and ⌃⌘→ go from one page to the other, and ⌥⌘N again puts them apart."))
+                Key("⌘O", String(localized: "Links from other apps open in a small window; ⌘O keeps one as a tab. Settings › Browsing."))
+                Key("⌘L", String(localized: "Suggestions from your search engine as you type — off until you turn them on in Settings › Browsing."))
+                Key("⌘", String(localized: "Held, it can show each tab's number for ⌘1–9. Settings › Tabs."))
+                Key("⌘,", String(localized: "A painted wall behind the blank tab, if you want one — Settings › Themes. Off until you choose."))
+                Key("⌘1", String(localized: "Pressed again on its pin, back to where you were."))
+                Key("⇧⌘P", String(localized: "Float a video in Search's window, or in macOS's picture in picture. Settings › Browsing."))
+                Key("⌃-click", String(localized: "Claude or ChatGPT in a side panel beside the page: right-click a tab › Open in Side Panel, or View › Side Panel."))
+                Key("⌘Q", String(localized: "Search can ask before it quits. Settings › General."))
+                Key("⌘,", String(localized: "Your Apple passwords, under the sign-in field — Settings › Passwords."))
                 if PageTranslator.available {
-                    Key("⌃-click", "Translate a page into your language, on this Mac — nothing is sent anywhere. Right-click the page › Translate Page.")
+                    Key("⌃-click", String(localized: "Translate a page into your language, on this Mac — nothing is sent anywhere. Right-click the page › Translate Page."))
                 }
                 if AI.shipped {
-                    Key("⌘,", "AI summaries and questions about a page — off until you turn it on in Settings › AI.")
+                    Key("⌘,", String(localized: "AI summaries and questions about a page — off until you turn it on in Settings › AI."))
                 }
             }
         }
@@ -303,7 +303,7 @@ struct WelcomePanel: View {
                     .font(.system(size: 13))
                     .foregroundStyle(Palette.muted)
             }
-            Big(page < pages - 1 ? "Continue" : "Start browsing", filled: true) {
+            Big(page < pages - 1 ? String(localized: "Continue") : String(localized: "Start browsing"), filled: true) {
                 if page < pages - 1 { forward = true; page += 1 } else { finish() }
             }
             .keyboardShortcut(.defaultAction)
@@ -330,25 +330,27 @@ struct WelcomePanel: View {
                     case .success(let found):
                         let kept = browser.keep(found)
                         ImportRecords.note(source.name, passwords: kept)
-                        lines.append("\(kept) passwords" + (found.undecrypted > 0 ? " (\(found.undecrypted) couldn't be decrypted)" : ""))
+                        lines.append(found.undecrypted > 0
+                            ? String(localized: "\(kept) passwords (\(found.undecrypted) couldn't be decrypted)")
+                            : String(localized: "\(kept) passwords"))
                     case .failure(Chromium.Trouble.noPassphrase):
-                        lines.append("passwords: macOS didn't hand over the key — allow it and try again")
+                        lines.append(String(localized: "passwords: macOS didn't hand over the key — allow it and try again"))
                     case .failure(Mozilla.Trouble.primaryPassword):
-                        lines.append("passwords: \(source.name) has a primary password — export them from it and bring in the CSV")
+                        lines.append(String(localized: "passwords: \(source.name) has a primary password — export them from it and bring in the CSV"))
                     case .failure:
-                        lines.append("passwords: nothing readable")
+                        lines.append(String(localized: "passwords: nothing readable"))
                     }
                     group.leave()
                 }
             }
         }
         if wantsBookmarks {
-            lines.append("\(browser.takeBookmarks(from: source, profile: profile).added) bookmarks")
+            lines.append(String(localized: "\(browser.takeBookmarks(from: source, profile: profile).added) bookmarks"))
         }
         if wantsHistory {
             group.enter()
             browser.takePlaces(from: source, profile: profile) { count in
-                lines.append("\(count) places")
+                lines.append(String(localized: "\(count) places"))
                 group.leave()
             }
         }

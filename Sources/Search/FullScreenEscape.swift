@@ -397,7 +397,7 @@ private final class ReminderPanel: NSPanel {
 /// What the pill says, light on dark whatever the appearance, since it lies
 /// over a video: "Press Esc again to exit full screen", the key as a key.
 private struct ReminderView: View {
-    static let words = "Press Esc again to exit full screen"
+    static let words = String(localized: "Press Esc again to exit full screen")
 
     var body: some View {
         HStack(spacing: 6) {

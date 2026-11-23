@@ -23,21 +23,21 @@ enum ColumnMenu {
             item.representedObject = does
             menu.addItem(item)
         }
-        add("New Tab") { [weak browser] in browser?.launch() }
+        add(String(localized: "New Tab")) { [weak browser] in browser?.launch() }
         if browser.prefs.showsPinFolders, !browser.websitePopup {
-            add("New Folder") { [weak browser] in _ = browser?.newPinFolder() }
-            add("New Live Folder…") { [weak browser] in
+            add(String(localized: "New Folder")) { [weak browser] in _ = browser?.newPinFolder() }
+            add(String(localized: "New Live Folder…")) { [weak browser] in
                 guard let browser else { return }
                 LiveFolders.ask(for: browser, in: nil)
             }
         }
         if let url = pasted(for: browser) {
             menu.addItem(.separator())
-            add("Paste and Go") { [weak browser] in browser?.open(url, foreground: true) }
+            add(String(localized: "Paste and Go")) { [weak browser] in browser?.open(url, foreground: true) }
         }
         menu.addItem(.separator())
-        add("Hide Sidebar") { [weak browser] in browser?.toggleFold() }
-        add("Sidebar Settings…") { [weak browser] in
+        add(String(localized: "Hide Sidebar")) { [weak browser] in browser?.toggleFold() }
+        add(String(localized: "Sidebar Settings…")) { [weak browser] in
             browser?.settingsPage = .tabs
             browser?.tuning = true
         }

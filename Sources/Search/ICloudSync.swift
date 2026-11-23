@@ -650,7 +650,7 @@ final class ICloudSync: ObservableObject {
         defer { joining = false }
         account = (try? await ICloudSync.outside { await engine.account() }) ?? .unknown
         guard account == .signedIn else {
-            problem = account == .restricted ? "iCloud is restricted on this Mac" : nil
+            problem = account == .restricted ? String(localized: "iCloud is restricted on this Mac") : nil
             return
         }
         do {
@@ -923,7 +923,14 @@ final class ICloudSync: ObservableObject {
     static let deletedElsewhere = "Off: Search's data was deleted from iCloud, on another device. Turn on to start again"
 
     /// Why it is off, when it turned itself off.
-    var offReason: String? { on ? nil : defaults.string(forKey: ICloudSync.offKey) }
+    /// The stored text stays English (it is what the defaults hold); the words drawn are looked up.
+    var offReason: String? {
+        guard !on, let stored = defaults.string(forKey: ICloudSync.offKey) else { return nil }
+        if stored == ICloudSync.deletedElsewhere {
+            return String(localized: "Off: Search's data was deleted from iCloud, on another device. Turn on to start again")
+        }
+        return stored
+    }
 
     // MARK: kept on disk
 
@@ -974,7 +981,7 @@ final class ICloudSync: ObservableObject {
         for (_, device) in devices {
             for page in device.tabs where page.title.lowercased().contains(words) || page.url.lowercased().contains(words) {
                 guard let url = URL(string: page.url) else { continue }
-                out.append(Suggestion(key: Address.editable(url), title: "On \(ICloudSync.title(device))", url: url, kind: .elsewhere))
+                out.append(Suggestion(key: Address.editable(url), title: String(localized: "On \(ICloudSync.title(device))"), url: url, kind: .elsewhere))
                 if out.count == limit { return out }
             }
         }
@@ -985,30 +992,31 @@ final class ICloudSync: ObservableObject {
     func summary(folderSyncOn: Bool, otherwise: String) -> String {
         guard available else {
             // A signed build in a test run is a build that could: it says so.
-            return Store.testing && ICloudSync.entitled ? "Off in a test run" : "Needs a build of Search signed for iCloud"
+            return Store.testing && ICloudSync.entitled ? String(localized: "Off in a test run") : String(localized: "Needs a build of Search signed for iCloud")
         }
-        if folderSyncOn && !on { return "Turn off Sync with your other Macs first" }
+        if folderSyncOn && !on { return String(localized: "Turn off Sync with your other Macs first") }
         guard on else { return offReason ?? otherwise }
         switch account {
-        case .signedOut: return "Not signed in to iCloud: System Settings › Apple Account"
-        case .restricted: return "iCloud is restricted on this Mac"
-        case .unknown: return problem ?? "Checking iCloud…"
+        case .signedOut: return String(localized: "Not signed in to iCloud: System Settings › Apple Account")
+        case .restricted: return String(localized: "iCloud is restricted on this Mac")
+        case .unknown: return problem ?? String(localized: "Checking iCloud…")
         case .signedIn:
-            if let problem { return "Signed in to iCloud · \(problem)" }
-            guard let lastSynced else { return "Signed in to iCloud · syncing…" }
+            if let problem { return String(localized: "Signed in to iCloud · \(problem)") }
+            guard let lastSynced else { return String(localized: "Signed in to iCloud · syncing…") }
             let when = RelativeDateTimeFormatter().localizedString(for: lastSynced, relativeTo: Date())
             let count = devices.count
-            let with = count == 0 ? "" : count == 1 ? " · 1 other device" : " · \(count) other devices"
-            return "Signed in to iCloud · synced \(when)\(with)"
+            if count == 0 { return String(localized: "Signed in to iCloud · synced \(when)") }
+            if count == 1 { return String(localized: "Signed in to iCloud · synced \(when) · 1 other device") }
+            return String(localized: "Signed in to iCloud · synced \(when) · \(count) other devices")
         }
     }
 
     static func say(_ error: Error) -> String {
         guard let error = error as? CKError else { return error.localizedDescription }
         switch error.code {
-        case .notAuthenticated: return "Sign in to iCloud in System Settings to sync"
-        case .quotaExceeded: return "Your iCloud is full"
-        case .networkFailure, .networkUnavailable: return "Offline. Sync carries on when you're back"
+        case .notAuthenticated: return String(localized: "Sign in to iCloud in System Settings to sync")
+        case .quotaExceeded: return String(localized: "Your iCloud is full")
+        case .networkFailure, .networkUnavailable: return String(localized: "Offline. Sync carries on when you're back")
         default: return error.localizedDescription
         }
     }

@@ -14,7 +14,7 @@ enum Webmail: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .none: return "Your mail app"
+        case .none: return String(localized: "Your mail app")
         case .gmail: return "Gmail"
         case .outlook: return "Outlook.com"
         case .fastmail: return "Fastmail"
